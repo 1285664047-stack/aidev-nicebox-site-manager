@@ -26,7 +26,7 @@ Use the one-shot Python script to avoid SIGKILL issues:
 ### Method 1: Command Line Arguments (Recommended)
 
 ```bash
-python3 {baseDir}/scripts/_full_gen.py \
+python3 -u {baseDir}/scripts/_full_gen.py \
   --company-name "帽饰工坊" \
   --industry "帽子设计" \
   --business-scope "帽子设计、帽子定制、帽饰批发" \
@@ -38,7 +38,7 @@ python3 {baseDir}/scripts/_full_gen.py \
 ### Method 2: Interactive Input
 
 ```bash
-python3 {baseDir}/scripts/_full_gen.py
+python3 -u {baseDir}/scripts/_full_gen.py
 # Then follow the prompts to enter information
 ```
 
@@ -77,6 +77,20 @@ Step 5: 获取分享链接（2 小时有效）
 
 ## Progress Indicators
 
+必须直接以前台、无缓冲方式运行脚本。禁止在命令后添加 `| tail`、`| head`、输出捕获或其他管道；这些操作会缓存输出，导致 WorkBuddy 在生成结束前看不到任何进度。不要把脚本包在等待其结束后才返回输出的二次 Python `subprocess` 中。
+
+正确：
+
+```bash
+python3 -u {baseDir}/scripts/_full_gen.py --company-name "公司名称" ...
+```
+
+错误：
+
+```bash
+python3 ... -c "subprocess.call(...)" 2>&1 | tail -40
+```
+
 Website generation shows real-time progress:
 
 | Indicator | Meaning | Example |
@@ -87,6 +101,7 @@ Website generation shows real-time progress:
 | [RECEIVED] Received | Characters/bytes received | `[RECEIVED] 已接收 15000 字符` |
 | [COMPLETE] Complete | Generation finished | `[COMPLETE] 网站生成完成！共接收 50000 字符` |
 | [ERROR] Error | Error message | `[ERROR] SSE 错误: 网络连接失败` |
+| [WAIT] Waiting | 后端暂无 SSE 时每 20 秒输出心跳 | `[WAIT] 网站仍在生成：已等待 2分0秒...` |
 
 ## 完整站点要求
 

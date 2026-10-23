@@ -15,6 +15,7 @@ metadata: {"clawdbot":{"emoji":"[TOOL]","requires":{"file":["scripts/config.json
 3. 参数错误、权限不足、确认缺失等业务错误不能通过切换 REST API 绕过。
 4. 切换回退通道前简要告知用户，但不得展示 API Key。
 5. 详细映射见 [mcp_tools.skill.md](skills/mcp_tools.skill.md)。
+6. WorkBuddy 环境必须优先使用 MCP 异步建站工具，不得运行本地 `_full_gen.py`。仅不支持 MCP 的 Legacy 宿主才可使用该脚本；回退时必须 `python -u` 直接前台执行，禁止追加 `tail`、管道或输出捕获。
 
 Base URL:
 

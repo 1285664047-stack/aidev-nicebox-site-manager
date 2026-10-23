@@ -167,6 +167,7 @@ AI: [OK] 网站生成成功！
 2. **Notify user about long wait time**:
    > [WAIT] 网站正在生成中，预计需要 5-10 分钟，请耐心等待...
 3. 使用 MCP 时每 15-30 秒查询原任务并展示等待时长和估算进度；不要重复启动任务
+4. 使用 API 回退脚本时必须用 `python3 -u` 直接前台运行，禁止使用 `tail`、`head`、管道或捕获输出；脚本会每 20 秒输出一次等待心跳
 
 ## [WARN] Chinese Encoding
 

@@ -19,7 +19,7 @@ _full_gen.py - AiWebSite 网站生成一次性脚本
     - 支持交互式输入收集信息
 """
 
-import urllib.request, urllib.error, urllib.parse, json, sys, time, pathlib, argparse
+import urllib.request, urllib.error, urllib.parse, json, sys, time, pathlib, argparse, threading
 
 from config_reader import get_api_key, get_base_url
 from openclaw_client import complete_site_requirement
@@ -27,7 +27,8 @@ import config_manager
 
 # Windows PowerShell 默认 GBK 编码，强制 UTF-8 输出，避免 UnicodeEncodeError
 try:
-    sys.stdout.reconfigure(encoding='utf-8')
+    sys.stdout.reconfigure(encoding='utf-8', line_buffering=True, write_through=True)
+    sys.stderr.reconfigure(encoding='utf-8', line_buffering=True, write_through=True)
 except Exception:
     pass  # 非 Windows 环境忽略
 
@@ -226,6 +227,21 @@ def main():
     sse_buffer = b''
     last_event_key = None
     last_activity_at = time.monotonic()
+    generation_started_at = time.monotonic()
+    heartbeat_stop = threading.Event()
+
+    def emit_heartbeat():
+        while not heartbeat_stop.wait(20):
+            elapsed = int(time.monotonic() - generation_started_at)
+            idle = int(time.monotonic() - last_activity_at)
+            print(
+                f'\n[WAIT] 网站仍在生成：已等待 {elapsed // 60}分{elapsed % 60}秒，'
+                f'最近收到服务端数据是 {idle} 秒前。请勿重复启动任务。',
+                flush=True,
+            )
+
+    heartbeat_thread = threading.Thread(target=emit_heartbeat, daemon=True)
+    heartbeat_thread.start()
 
     try:
         resp = urllib.request.urlopen(req, timeout=600)
@@ -290,6 +306,9 @@ def main():
     except Exception as e:
         print(f'  [ERROR] SSE stream failed: {e}')
         sys.exit(1)
+    finally:
+        heartbeat_stop.set()
+        heartbeat_thread.join(timeout=1)
 
     # Save raw SSE response (for debugging) - 只替换 HTML 代码内容，保留其他内容
     script_dir = pathlib.Path(__file__).parent
