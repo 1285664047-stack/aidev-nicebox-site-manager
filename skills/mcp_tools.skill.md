@@ -6,6 +6,15 @@ metadata: {"clawdbot":{"emoji":"[MCP]"}}
 
 # MCP 优先、普通 API 回退
 
+## MCP Server 连接
+
+- Transport：Streamable HTTP
+- URL：`https://aidev.nicebox.cn/mcp`
+- Authentication：`Authorization: Bearer <API_KEY>`
+- API Key 从 `{baseDir}/scripts/config.json` 的 `api_key` 读取，不得输出给用户或写入日志。
+- 宿主没有发现 `nicebox_*` 工具时，先使用技能依赖中声明的上述端点注册或连接；不要询问用户提供 MCP Server 地址。
+- 只有默认端点连接失败且宿主无法使用 REST API 回退，或用户明确要求自定义端点时，才向用户询问其他地址。
+
 ## 调用优先级
 
 1. 宿主存在对应 `nicebox_*` MCP 工具时，优先调用 MCP。

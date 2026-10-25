@@ -10,12 +10,14 @@ metadata: {"clawdbot":{"emoji":"[TOOL]","requires":{"file":["scripts/config.json
 
 ## [ROUTE] 调用通道
 
-1. 优先使用宿主已经注册的 `nicebox_*` MCP 工具。
-2. 只有工具不存在、MCP Server 不可达或宿主不支持 MCP 时，才使用 `scripts/` 普通 API 脚本。
-3. 参数错误、权限不足、确认缺失等业务错误不能通过切换 REST API 绕过。
-4. 切换回退通道前简要告知用户，但不得展示 API Key。
-5. 详细映射见 [mcp_tools.skill.md](skills/mcp_tools.skill.md)。
-6. WorkBuddy 环境必须优先使用 MCP 异步建站工具，不得运行本地 `_full_gen.py`。仅不支持 MCP 的 Legacy 宿主才可使用该脚本；回退时必须 `python -u` 直接前台执行，禁止追加 `tail`、管道或输出捕获。
+1. Nicebox MCP Server 使用 Streamable HTTP，默认地址固定为 `https://aidev.nicebox.cn/mcp`，并已在 `agents/openai.yaml` 声明。连接时使用 `Authorization: Bearer <API_KEY>`，其中 API Key 从 `scripts/config.json` 的 `api_key` 读取，禁止在对话或日志中展示。
+2. 优先使用宿主已经注册的 `nicebox_*` MCP 工具。若宿主支持技能依赖自动注册，应直接使用上述默认地址连接，不要询问用户提供 MCP Server 地址。
+3. 宿主没有自动注册能力但允许添加 MCP Server 时，使用上述默认地址配置，不要让用户重复选择连接地址。只有用户明确要求覆盖默认端点时才询问新地址。
+4. 只有工具不存在、默认 MCP Server 不可达或宿主不支持 MCP 时，才使用 `scripts/` 普通 API 脚本；不要因为宿主尚未注册工具就先向用户询问地址。
+5. 参数错误、权限不足、确认缺失等业务错误不能通过切换 REST API 绕过。
+6. 切换回退通道前简要告知用户，但不得展示 API Key。
+7. 详细映射见 [mcp_tools.skill.md](skills/mcp_tools.skill.md)。
+8. WorkBuddy 环境必须优先使用 MCP 异步建站工具，不得运行本地 `_full_gen.py`。仅不支持 MCP 的 Legacy 宿主才可使用该脚本；回退时必须 `python -u` 直接前台执行，禁止追加 `tail`、管道或输出捕获。
 
 Base URL:
 
@@ -196,4 +198,4 @@ python config_manager.py
 * If your API field names differ, update the payload fields in the scripts.
 * Unanswered fields are always stored as the string `"未填写"`, never as empty strings.
 * State is stored in `.dialogue_state.json` in the scripts directory.
-* **Important**: base_url is dynamically read from config.json at runtime. Do not hardcode any URL in scripts or documentation.
+* **Important**: REST API `base_url` is dynamically read from `config.json` at runtime and must not be hardcoded. This does not apply to the Nicebox MCP endpoint declared in `agents/openai.yaml`.
