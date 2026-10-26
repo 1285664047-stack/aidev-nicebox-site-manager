@@ -107,6 +107,14 @@ Website generation shows real-time progress:
 
 生成需求必须明确包含页面计划和初始化内容。用户未指定时默认：首页、关于我们、产品或服务、新闻资讯、联系我们，并生成 6-8 条业务相关的示例产品/服务和 6-8 条行业文章。示例内容不得虚构价格、认证、客户案例、联系方式或功效。
 
+调用生成接口时，必须把以下结构约束放进 `requirement`，不能只写“生成完整网站”：
+
+- 一级导航必须使用 `data-type="nav"`、`data-nav-level="1"`、唯一 `data-typeid`，并同时提供相同的 `href` 与 `data-href` 英文锚点。
+- 导航 `#home/#about/#products/#news/#contact` 必须分别对应首页中的 `<section id="home/about/products/news/contact">`；锚点去掉 `#` 后必须与 section id 完全一致。
+- 产品区使用 `data-type="products"`，产品项使用 `data-type="product"`；新闻区使用 `data-type="newslist"`，文章项使用 `data-type="news"`。
+- 所有栏目正文必须完整存在于首页相应 section，不能创建空 section，也不能只生成导航。后端正是从这些 section 截取并保存内页内容。
+- 禁止使用 `href="#"`、`javascript:`、中文路径、页面占位符或指向不存在 section 的导航。
+
 生成接口完成后依次检查首页和站点状态中的 `pages_count`、`generated_pages_count`、`products_count`、`articles_count`。只有首页有效但没有内页或内容数据时，应报告“整站生成不完整”，不能进入整站成功提示。
 
 ## 8 Core Questions

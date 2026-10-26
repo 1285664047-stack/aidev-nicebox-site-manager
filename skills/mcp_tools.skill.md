@@ -50,3 +50,5 @@ metadata: {"clawdbot":{"emoji":"[MCP]"}}
 `nicebox_get_website_generation_status`，向用户展示 `status`、`progress`、`elapsed_seconds` 和 `message`。
 `progress_estimated=true` 表示百分比是等待时间估算，只提供进度感知；只有 `status=succeeded` 且首页验证通过才算真正完成。
 不得频繁轮询，也不得因等待较久重复启动生成任务。
+
+调用 `nicebox_start_website_generation` 时，`requirement` 必须包含完整的导航与 section 映射约束：一级导航使用 `data-type="nav"`，英文锚点去掉 `#` 后与首页对应 `section id` 完全相同；产品区/项使用 `products`/`product`，新闻区/项使用 `newslist`/`news`。不能只传公司资料或“生成完整网站”，否则后端可能只创建内页记录而无法截取内页正文。
