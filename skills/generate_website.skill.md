@@ -19,6 +19,8 @@ Generate a complete website for your business using AiWebSite AI.
 - 下次重新生成时，可从 `config.json` 恢复之前的信息
 - 信息进入配置体系，后续操作（发布、编辑等）可复用
 
+重新生成时第一次回应必须提醒：初始化会删除页面、产品、文章、留言等所有站点内容，并先创建普通备份。若当前对话或 `config.json` 已有网站资料，同时展示旧资料并询问用户选择“沿用旧资料”或“修改资料”；修改后重新展示摘要。只有资料定稿后才能继续正式初始化确认和生成确认。
+
 ## [API] Direct API Call (Recommended)
 
 Use the one-shot Python script to avoid SIGKILL issues:

@@ -21,6 +21,8 @@ AI-guided multi-turn dialogue to generate a website. **All answers are manually 
 
 ## [WARN] 【强制】AI 操作流程（必须严格按此顺序执行）
 
+重新生成时，在 `ask-init` 之前先提醒初始化会删除页面、产品、文章、留言等所有站点内容并创建普通备份；已有对话资料时同时展示旧资料，询问用户“沿用旧资料 / 修改资料”。资料未定稿时不得运行任何初始化或生成命令。
+
 ```
 第 1 步：ask-init       ← 【必须首先执行】检查站点数据（第1次确认）
 第 2 步：answer "内容"  ← 逐题收集企业信息（8 个问题）
