@@ -25,6 +25,8 @@ metadata: {"clawdbot":{"emoji":"[SEO]","requires":{"file":["scripts/config.json"
 
 用户看到域名并明确二次确认后才能启动。用户说“检测”或“重新检测”只是表达意图，不等于确认。MCP 启动时传 `target_domain={domain}`；API 回退传 `--target-domain "{domain}"`。启动前域名变化时必须重新展示并确认。启动后保存 `operation_id` 并查询状态，禁止重复启动。
 
+`target_domain` 必须原样采用站点状态工具返回并展示给用户的当前域名，不要自行切换 `http/https` 或增删 `www` 反复试探。工具返回 `CONFIRMATION_REQUIRED` 时展示新的 `current_domain` 并重新确认；返回 `SITE_NOT_PUBLISHED` 时引导先发布网站。若返回 PHP 类型错误或 HTTP 500，应明确报告服务端错误，不要通过修改域名规避。
+
 ## 一键优化
 
 1. 先查询最新完成报告和真实可优化项。

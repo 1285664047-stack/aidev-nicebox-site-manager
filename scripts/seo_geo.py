@@ -55,7 +55,7 @@ def main():
                     "options": ["确认开始", "取消"],
                 })
                 return 3
-            if publish_status != "published":
+            if publish_status.lower() not in ("published", "1", "true"):
                 output({
                     "error": "当前网站尚未发布，请先发布网站，再进行 SEO/GEO 检测。",
                     "error_code": "SITE_NOT_PUBLISHED",

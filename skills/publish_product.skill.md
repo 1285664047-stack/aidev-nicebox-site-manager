@@ -20,10 +20,11 @@ metadata: {"clawdbot":{"emoji":"[PRODUCT]","requires":{"file":["scripts/config.j
 4. 没有产品图片时停下来询问：提供/上传可访问的图片 URL，还是 AI 生成封面。
 5. 用户选择 AI 后必须继续询问比例：`1:1`、`4:3`、`3:2`、`16:9`、`2:3`、`3:4` 或 `9:16`，不得替用户默认选择。
 6. MCP 调用 `nicebox_generate_content_cover` 时传 `aspect_ratio`；API 回退使用 `--ai-cover --cover-ratio 比例`。
-7. 无论用户要求草稿还是直接发布，都先调用 `nicebox_create_product_draft`。
+7. 无论用户要求草稿、直接发布还是“发布一个新的产品”，都先调用 `nicebox_create_product_draft`。最初的“发布”指令只表示创建意图，不是正式发布确认。
 8. 取得 `product_id` 后调用 `nicebox_generate_content_preview`，展示包含 `id` 和 `prodId` 的完整预览地址。
-9. 用户明确确认后，按该 `product_id` 调用 `nicebox_publish_product`；不得重新创建产品。
+9. 展示预览地址后必须停下来询问是否正式发布。只有用户在看到本次预览后再次明确确认，才能按该 `product_id` 调用 `nicebox_publish_product`；不得复用最初的发布要求、生成确认或历史确认，不得重新创建产品。
 10. 用户暂不发布时保留草稿。
+11. 预览失败或预览地址尚未展示时只能保留草稿并重试同一 `product_id` 的预览，绝不能调用 `nicebox_publish_product`。
 
 ## API 回退
 
