@@ -71,7 +71,7 @@ node {baseDir}/scripts/generate_website.mjs generate
 | # | Question | Field | Required |
 |---|----------|---------|----------|
 | 1 | 公司名称 | company_name [REQ] | Yes |
-| 2 | Logo | logo | No |
+| 2 | Logo | logo | No；提供 URL、AI 生成或暂不设置；AI 生成需选择 `1:1` 或 `5:2` |
 | 3 | 行业 | industry | No |
 | 4 | 业务范围 | business_scope | No |
 | 5 | 核心优势 | advantages | No |
@@ -118,7 +118,8 @@ AI: [WARN] 检测到站点已有数据，生成网站将初始化站点，清空
 AI: [执行] python3 generate_website.py answer "帽饰工坊"
 [输出] Q2 Logo 问题...
 
-AI: 请问您是否有公司logo地址？没有请直接跳过。
+AI: Logo 可以提供可访问图片 URL，也可以由 AI 生成，或暂不设置。请选择一种方式。
+   选择 AI 生成时，请继续选择 `1:1` 方形或 `5:2` 横版；不得替用户默认选择。
    [停止，等待用户回复]
 ```
 

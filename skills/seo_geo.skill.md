@@ -17,9 +17,13 @@ metadata: {"clawdbot":{"emoji":"[SEO]","requires":{"file":["scripts/config.json"
 
 每一次首次检测、重新检测、优化后复检或发布后复检，都必须先提示：
 
-> 本次检测会消耗 Token 额度，通常需要等待几分钟。检测只生成报告，不会修改或发布网站。是否开始检测？
+1. 先调用站点状态工具读取当前 `domain` 和 `publish_status`。
+2. 提醒用户 SEO/GEO 检测应在网站发布后进行；若尚未发布，停止检测并引导用户先预览、确认和发布。
+3. 网站已发布时展示当前检测域名，并提示：
 
-用户明确确认后才能启动。用户说“重新检测”只是表达意图，不等于确认。启动后保存 `operation_id` 并查询状态，禁止重复启动。
+> 请确保网站已经发布后再检测。当前检测域名：`{domain}`。本次检测会消耗 Token 额度，通常需要等待几分钟；检测只生成报告，不会修改或发布网站。确认对这个域名开始检测吗？
+
+用户看到域名并明确二次确认后才能启动。用户说“检测”或“重新检测”只是表达意图，不等于确认。MCP 启动时传 `target_domain={domain}`；API 回退传 `--target-domain "{domain}"`。启动前域名变化时必须重新展示并确认。启动后保存 `operation_id` 并查询状态，禁止重复启动。
 
 ## 一键优化
 
@@ -36,7 +40,7 @@ python3 {baseDir}/scripts/seo_geo.py latest
 python3 {baseDir}/scripts/seo_geo.py report --report-id 123
 python3 {baseDir}/scripts/seo_geo.py optimizable --report-id 123
 python3 {baseDir}/scripts/seo_geo.py start-detect
-python3 {baseDir}/scripts/seo_geo.py start-detect --confirmed --request-id stable-id
+python3 {baseDir}/scripts/seo_geo.py start-detect --confirmed --target-domain "https://example.com" --request-id stable-id
 python3 {baseDir}/scripts/seo_geo.py detect-status --operation-id operation-id
 python3 {baseDir}/scripts/seo_geo.py start-optimize --report-id 123 --items 15 16 19
 python3 {baseDir}/scripts/seo_geo.py start-optimize --report-id 123 --items 15 16 19 --confirmed --request-id stable-id

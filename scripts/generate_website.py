@@ -65,8 +65,8 @@ QUESTIONS = [
     },
     {
         "field": "logo",
-        "question": "请问您是否有公司logo地址？没有请直接跳过。",
-        "placeholder": "例如：https://example.com/logo.png",
+        "question": "Logo 可以提供可访问图片 URL，也可以由 AI 生成，或暂不设置。请选择一种方式。",
+        "placeholder": "提供URL / AI生成 / 暂不设置；AI生成时还需选择 1:1 方形或 5:2 横版",
         "required": False,
         "followups": [],          # 公司logo无追问
     },
@@ -432,7 +432,7 @@ def sanitize_company_info(collected):
     """
     规范化公司信息：
       - 空值 → "未填写"
-      - Logo 未填写 → 占位图
+      - Logo 未填写 → 保持未填写；对话应先提示可提供 URL 或 AI 生成
     """
     result = {}
     for key in FIELD_LABELS:
@@ -441,10 +441,6 @@ def sanitize_company_info(collected):
             result[key] = "未填写"
         else:
             result[key] = value.strip()
-
-    if result.get("logo") == "未填写" or not result.get("logo"):
-        name = result.get("company_name", "Logo")
-        result["logo"] = f"https://via.placeholder.com/200x80/8B4513/FFFFFF?text={urllib.parse.quote(name[:6])}"
 
     return result
 

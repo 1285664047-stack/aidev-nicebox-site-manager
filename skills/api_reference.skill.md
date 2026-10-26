@@ -41,7 +41,7 @@ Authorization: Bearer YOUR_API_KEY
 | POST | `/product/save` | Create or update product draft |
 | POST | `/product/publishSaved` | Publish a saved product by product_id |
 | GET | `/product/getCategories` | List product categories |
-| POST | `/ai_tools/generateContentCover` | Generate article/product cover candidate |
+| POST | `/ai_tools/generateContentCover` | Generate article/product cover or Logo candidate with `aspect_ratio` |
 | GET | `/site_pages/getLanguageList` | List site languages |
 | GET | `/site_pages/readIndexHtml` | Read index HTML |
 | POST | `/template/initializeData` | Initialize site data |
@@ -79,16 +79,15 @@ Authorization: Bearer YOUR_API_KEY
 | `phone` | No | Contact phone |
 | `email` | No | Contact email |
 | `address` | No | Company address |
-| `logo` | No | Logo (use placeholder if not provided) |
+| `logo` | No | Public Logo URL, accepted AI Logo URL, or `未填写` |
 | `style` | No | Visual style (including colors) |
 | `other` | No | Other information |
 
 **Important**: The API returns `400 "公司名称/网站名称不能为空"` if required fields are missing. When fields are not provided, store as `"未填写"` (not empty string).
 
-**Logo placeholder** (when user has no logo):
-```
-https://via.placeholder.com/200x80/8B4513/FFFFFF?text=CompanyName
-```
+**Logo handling** (when user has no logo):
+
+Ask the user to choose a public URL, AI generation, or no Logo. For AI generation call `/ai_tools/generateContentCover` with `content_type=logo` and `aspect_ratio=1:1` or `5:2`; show the candidate before saving it. Do not silently create a placeholder.
 
 ## generateWebsite SSE Events
 

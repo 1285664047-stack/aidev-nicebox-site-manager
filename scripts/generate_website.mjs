@@ -40,7 +40,7 @@ const ENDPOINTS = {
 // 8 个核心问题
 const QUESTIONS = [
   { field: 'company_name', question: '请问您的公司名称或想创建的网站名称是什么？', placeholder: '例如：明德律师事务所', required: true },
-  { field: 'logo', question: '请问您是否有公司logo地址？没有请直接跳过。', placeholder: 'https://example.com/logo.png', required: false },
+  { field: 'logo', question: 'Logo 可以提供可访问图片 URL，也可以由 AI 生成，或暂不设置。请选择一种方式。', placeholder: '提供URL / AI生成 / 暂不设置；AI生成需选择1:1或5:2', required: false },
   { field: 'industry', question: '您从事哪个行业？', placeholder: '例如：科技、医疗、教育', required: false },
   { field: 'business_scope', question: '您的业务范围是什么？提供哪些产品或服务？', placeholder: '例如：软件开发与定制', required: false },
   { field: 'advantages', question: '您的核心竞争优势是什么？', placeholder: '例如：技术领先、价格合理', required: false },
@@ -113,12 +113,6 @@ function sanitizeInfo(collected) {
       result[key] = value.trim();
     }
   });
-  
-  // Logo 占位图
-  if (!result.logo || result.logo === '未填写') {
-    const name = result.company_name || 'Logo';
-    result.logo = `https://via.placeholder.com/200x80/8B4513/FFFFFF?text=${encodeURIComponent(name.substring(0, 6))}`;
-  }
   
   return result;
 }

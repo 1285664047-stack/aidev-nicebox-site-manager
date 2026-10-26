@@ -62,6 +62,8 @@ Step 5: 获取分享链接（2 小时有效）
 | `--business-scope` | Business scope | No |
 | `--advantages` | Core advantages | No |
 | `--logo` | Logo URL | No |
+| `--ai-logo` | 使用 AI 生成 Logo | No；与 `--logo-ratio` 同时使用 |
+| `--logo-ratio` | AI Logo 比例：`1:1` 或 `5:2` | 使用 `--ai-logo` 时必填 |
 | `--phone` | Contact phone | No |
 | `--email` | Contact email | No |
 | `--address` | Company address | No |
@@ -122,7 +124,7 @@ Website generation shows real-time progress:
 | # | Question | Field | Required |
 |---|----------|---------|----------|
 | 1 | Company name | company_name | [REQ] Yes |
-| 2 | Logo | logo | No |
+| 2 | Logo | logo | No；提供 URL、AI 生成或暂不设置 |
 | 3 | Industry | industry | No |
 | 4 | Business scope | business_scope | No |
 | 5 | Core advantages | advantages | No |

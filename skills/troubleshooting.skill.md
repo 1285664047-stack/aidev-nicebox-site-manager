@@ -29,11 +29,7 @@ The `getCompanyInfo` API requires `company_name` field to be non-empty. Unfilled
 
 ## Logo Field is Empty
 
-Use a placeholder image URL:
-```
-https://via.placeholder.com/200x80/8B4513/FFFFFF?text=Logo
-```
-Color codes: `8B4513` (brown), `00A86B` (green), `1E3A8A` (blue), `D4AF37` (gold)
+Ask the user to choose one of: provide a public Logo URL, generate an AI Logo, or leave it unset. For AI generation, ask for `1:1` square or `5:2` horizontal first, show the candidate, and save it only after the user accepts it. Do not silently insert a placeholder URL.
 
 ## SSE Streaming Error
 

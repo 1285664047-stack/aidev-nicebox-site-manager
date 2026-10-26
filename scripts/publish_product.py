@@ -34,6 +34,7 @@ def parse_args():
     parser.add_argument("--currency", default="CNY")
     parser.add_argument("--images", nargs="*", default=[])
     parser.add_argument("--ai-cover", action="store_true")
+    parser.add_argument("--cover-ratio", choices=["1:1", "4:3", "3:2", "16:9", "2:3", "3:4", "9:16"])
     parser.add_argument("--locale", default="zh-CN")
     parser.add_argument("--keywords", default="")
     parser.add_argument("--parameters", default="")
@@ -72,8 +73,16 @@ def main():
             })
             return 3
         if not images:
+            if not args.cover_ratio:
+                output({
+                    "need_cover_ratio": True,
+                    "message": "请选择 AI 产品封面的图片比例。",
+                    "options": ["1:1", "4:3", "3:2", "16:9", "2:3", "3:4", "9:16"],
+                })
+                return 3
             cover_data = request("POST", "/ai_tools/generateContentCover", {
                 "content_type": "product", "title": args.name,
+                "aspect_ratio": args.cover_ratio,
             })
             images = [cover_data["cover_url"]]
 

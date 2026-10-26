@@ -33,6 +33,7 @@ metadata: {"clawdbot":{"emoji":"[MCP]"}}
 | 产品草稿 | `nicebox_create_product_draft` | `publish_product.py` |
 | 产品正式发布 | `nicebox_publish_product` | `publish_product.py --publish-saved ID --confirmed` |
 | 内容封面 | `nicebox_generate_content_cover` | 文章/产品脚本的 `--ai-cover` |
+| AI Logo | `nicebox_generate_logo` | `generate_logo.py` |
 | 内容预览 | `nicebox_generate_content_preview` | 文章/产品脚本保存后自动生成 |
 | 最新 SEO/GEO 报告 | `nicebox_get_latest_seo_geo_report` | `seo_geo.py latest` |
 | SEO/GEO 报告详情 | `nicebox_get_seo_geo_report` | `seo_geo.py report --report-id ID` |
@@ -43,6 +44,8 @@ metadata: {"clawdbot":{"emoji":"[MCP]"}}
 | 查询优化状态 | `nicebox_get_seo_geo_optimization_status` | `seo_geo.py optimize-status --operation-id ID` |
 
 状态查询、检测和优化重试必须继续使用原 `operation_id` 或 `request_id`，不得因为切换通道重复创建任务。
+
+生成文章或产品封面前，先让用户选择图片比例，再向 `nicebox_generate_content_cover` 传 `aspect_ratio`；不得静默使用默认比例。网站 Logo 缺失时提示用户选择提供 URL、AI 生成或暂不设置；选择 AI 后询问 `1:1` 方形或 `5:2` 横版，再调用 `nicebox_generate_logo`，展示候选图并在用户接受后作为企业资料 `logo`。
 
 ## 网站生成进度
 

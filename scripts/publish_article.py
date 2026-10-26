@@ -31,6 +31,7 @@ def parse_args():
     parser.add_argument("--author", default="")
     parser.add_argument("--cover", default="")
     parser.add_argument("--ai-cover", action="store_true")
+    parser.add_argument("--cover-ratio", choices=["1:1", "4:3", "3:2", "16:9", "2:3", "3:4", "9:16"])
     parser.add_argument("--category-id", type=int, default=0)
     parser.add_argument("--locale", default="zh-CN")
     parser.add_argument("--publish-saved", type=int, default=0, metavar="ARTICLE_ID")
@@ -65,8 +66,16 @@ def main():
             })
             return 3
         if not cover:
+            if not args.cover_ratio:
+                output({
+                    "need_cover_ratio": True,
+                    "message": "请选择 AI 文章封面的图片比例。",
+                    "options": ["1:1", "4:3", "3:2", "16:9", "2:3", "3:4", "9:16"],
+                })
+                return 3
             cover_data = request("POST", "/ai_tools/generateContentCover", {
                 "content_type": "article", "title": args.title,
+                "aspect_ratio": args.cover_ratio,
             })
             cover = cover_data["cover_url"]
 

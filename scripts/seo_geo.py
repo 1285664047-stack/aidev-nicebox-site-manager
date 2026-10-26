@@ -19,6 +19,7 @@ def parse_args():
     items.add_argument("--report-id", type=int, required=True)
     detect = sub.add_parser("start-detect")
     detect.add_argument("--confirmed", action="store_true")
+    detect.add_argument("--target-domain", default="")
     detect.add_argument("--request-id", default="")
     detect_status = sub.add_parser("detect-status")
     detect_status.add_argument("--operation-id", required=True)
@@ -42,15 +43,38 @@ def main():
         elif args.action == "optimizable":
             data = request("GET", "/seo_geo/getOptimizableItems", {"report_id": args.report_id})
         elif args.action == "start-detect":
+            site_status = request("GET", "/site/status")
+            current_domain = str(site_status.get("domain") or "").strip()
+            publish_status = str(site_status.get("publish_status") or "").strip()
             if not args.confirmed:
                 output({
                     "need_confirm": True,
-                    "message": "本次检测会消耗 Token 额度，通常需要等待几分钟。检测只生成报告，不会修改或发布网站。是否开始检测？",
+                    "current_domain": current_domain,
+                    "publish_status": publish_status,
+                    "message": "请确保网站已经发布后再检测。当前检测域名：%s。本次检测会消耗 Token 额度，通常需要等待几分钟；只生成报告，不会修改或发布网站。确认对这个域名开始检测吗？" % (current_domain or "未获取到域名"),
                     "options": ["确认开始", "取消"],
+                })
+                return 3
+            if publish_status != "published":
+                output({
+                    "error": "当前网站尚未发布，请先发布网站，再进行 SEO/GEO 检测。",
+                    "error_code": "SITE_NOT_PUBLISHED",
+                    "current_domain": current_domain,
+                    "publish_status": publish_status,
+                }, ok=False)
+                return 1
+            normalize_domain = lambda value: str(value or "").strip().rstrip("/").lower()
+            if not args.target_domain or normalize_domain(args.target_domain) != normalize_domain(current_domain):
+                output({
+                    "need_confirm": True,
+                    "error_code": "CONFIRMATION_REQUIRED",
+                    "message": "当前检测域名未确认或已经变化，请展示最新域名并重新确认。",
+                    "current_domain": current_domain,
                 })
                 return 3
             data = request("POST", "/seo_geo/startDetection", {
                 "confirmed": True,
+                "target_domain": current_domain,
                 "request_id": args.request_id or "legacy-detect-" + uuid.uuid4().hex,
             })
         elif args.action == "detect-status":

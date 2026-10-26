@@ -64,6 +64,20 @@ def call_api(endpoint, data=None, headers_extra=None):
         return {'code': -1, 'error': str(e)}
 
 
+def generate_logo_candidate(company_name, industry='', style='', ratio='1:1'):
+    title = ' '.join(filter(None, [company_name, industry, style]))[:200]
+    result = call_api('/ai_tools/generateContentCover', {
+        'content_type': 'logo',
+        'title': title,
+        'aspect_ratio': ratio,
+    })
+    data = result.get('data') or {}
+    logo_url = data.get('logo_url') or data.get('cover_url')
+    if result.get('code') != 0 or not logo_url:
+        raise RuntimeError(result.get('message') or 'AI Logo 生成失败')
+    return logo_url
+
+
 def get_user_input():
     """交互式获取用户输入"""
     questions = [
@@ -95,13 +109,23 @@ def get_user_input():
         else:
             value = input(f'{question}（{example}）: ').strip()
             company_data[field] = value if value else '未填写'
-    
-    # Logo 默认占位图
-    if not company_data.get('logo') or company_data.get('logo') == '未填写':
-        name = company_data.get('company_name', 'Logo')
-        company_data['logo'] = f'https://via.placeholder.com/200x80/8B4513/FFFFFF?text={urllib.parse.quote(name[:6])}'
+
+    print('\nLogo 设置：1=提供图片 URL，2=AI 生成，3=暂不设置')
+    logo_choice = input('请选择（1/2/3）: ').strip()
+    if logo_choice == '1':
+        company_data['logo'] = input('请输入可访问的 Logo URL: ').strip() or '未填写'
+    elif logo_choice == '2':
+        logo_ratio = input('请选择 Logo 比例（1=1:1 方形，2=5:2 横版）: ').strip()
+        ratio = '5:2' if logo_ratio == '2' else '1:1'
+        company_data['logo'] = generate_logo_candidate(
+            company_data['company_name'],
+            company_data.get('industry', ''),
+            company_data.get('style', ''),
+            ratio,
+        )
+        print('  [OK] AI Logo 候选图已生成：' + company_data['logo'])
     else:
-        company_data.setdefault('logo', '未填写')
+        company_data['logo'] = '未填写'
     
     print('=' * 50)
     print('\n[OK] 信息收集完成')
@@ -117,6 +141,8 @@ def main():
     parser.add_argument('--business-scope', dest='business_scope', help='业务范围')
     parser.add_argument('--advantages', help='核心优势')
     parser.add_argument('--logo', help='Logo 地址')
+    parser.add_argument('--ai-logo', action='store_true', help='使用 AI 生成 Logo')
+    parser.add_argument('--logo-ratio', choices=['1:1', '5:2'], help='AI Logo 比例')
     parser.add_argument('--phone', help='联系电话')
     parser.add_argument('--email', help='联系邮箱')
     parser.add_argument('--address', help='公司地址')
@@ -148,9 +174,19 @@ def main():
         # 处理 Logo
         if args.logo:
             company_data['logo'] = args.logo
+        elif args.ai_logo:
+            if not args.logo_ratio:
+                print('[ERROR] 使用 --ai-logo 时必须通过 --logo-ratio 选择 1:1 或 5:2')
+                sys.exit(2)
+            company_data['logo'] = generate_logo_candidate(
+                company_data['company_name'],
+                company_data.get('industry', ''),
+                company_data.get('style', ''),
+                args.logo_ratio,
+            )
+            print('  [OK] AI Logo 候选图已生成：' + company_data['logo'])
         else:
-            name = company_data.get('company_name', 'Logo')
-            company_data['logo'] = f'https://via.placeholder.com/200x80/8B4513/FFFFFF?text={urllib.parse.quote(name[:6])}'
+            company_data['logo'] = '未填写'
         
         print('\n[OK] 使用命令行参数')
     else:
