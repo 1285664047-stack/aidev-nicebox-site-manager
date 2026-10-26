@@ -37,10 +37,12 @@ metadata: {"clawdbot":{"emoji":"[MCP]"}}
 | 内容预览 | `nicebox_generate_content_preview` | 文章/产品脚本保存后自动生成 |
 | 最新 SEO/GEO 报告 | `nicebox_get_latest_seo_geo_report` | `seo_geo.py latest` |
 | SEO/GEO 报告详情 | `nicebox_get_seo_geo_report` | `seo_geo.py report --report-id ID` |
+| 无报告全量优化计划 | `nicebox_get_direct_optimization_plan` | 暂无 API 脚本回退 |
 | 可自动优化项 | `nicebox_get_seo_geo_optimizable_items` | `seo_geo.py optimizable --report-id ID` |
 | 启动 SEO/GEO 检测 | `nicebox_start_seo_geo_detection` | `seo_geo.py start-detect --confirmed --request-id ID` |
 | 查询检测状态 | `nicebox_get_seo_geo_detection_status` | `seo_geo.py detect-status --operation-id ID` |
 | 启动一键优化 | `nicebox_start_seo_geo_optimization` | `seo_geo.py start-optimize ... --confirmed --request-id ID` |
+| 无报告启动全量一键优化 | `nicebox_start_direct_optimization` | 暂无 API 脚本回退 |
 | 查询优化状态 | `nicebox_get_seo_geo_optimization_status` | `seo_geo.py optimize-status --operation-id ID` |
 
 状态查询、检测和优化重试必须继续使用原 `operation_id` 或 `request_id`，不得因为切换通道重复创建任务。
