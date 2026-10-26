@@ -18,6 +18,14 @@ FTP 密码由 API 服务端直接从账号级 `account_ftp_config` 表读取，�
 
 发布任务保存在 `publish_tasks` 数据库表，不依赖 PHP Session、Cookie 或 MCP 会话。取得真实 `task_id` 后，上传和后续状态查询都必须显式传同一个 ID；不能按“当前任务”猜测。第一批返回 `phase=generating_files`、`task_id=null` 是正常状态，不得诊断为 Session 丢失。
 
+上传阶段 `nicebox_start_publish` 的 `task_id` 和 `batch_number` 也都必须放在工具顶层。首次上传使用 `batch_number=1`；返回 `has_more=true` 时把 `next_batch` 作为下一次顶层批次号并复用同一个任务 ID。不得只传 `options`，否则旧服务会出现 `Undefined array key "batch_number"`。
+
+最后一批上传后，按同一个 `task_id` 查询发布状态。只有任务为 `completed`、`site_publish_status=published`，且再次调用站点状态也得到 `publish_status=published`，才能说整站发布成功或进入 SEO/GEO 检测。任务完成但站点状态未同步时先查询任务触发服务端修复，再复查站点，不能根据上传文件数自行判断。
+
+增量准备返回 `no_changes=true` 或 `total_files=0` 时，明确提示“本次增量发布没有发现需要上传的内容，因此未执行 FTP 上传”。这只代表生成文件与上次成功清单的哈希一致，不足以证明公网内容必然最新。若用户确认线上仍旧，先检查预览和生成结果，再展示全量/force 覆盖影响并取得新的发布确认。
+
+`clean_before_publish=true` 会清空远端目录，必须同时使用 `upload_mode=full`；禁止与增量模式组合。任务创建前生成清单必须包含 `index.html`、`index.htm` 或 `index.php` 首页入口。若只有 sitemap、robots、JS/CSS 等辅助文件，停止发布并要求先重新生成、验证首页和内页；不得通过新增文章等无关修改故意触发增量哈希。
+
 ## [WARN] 【强制】发布确认机制（三重保障）
 
 **AI 在发布网站时，必须严格遵守以下 3 条规则，不得违反：**

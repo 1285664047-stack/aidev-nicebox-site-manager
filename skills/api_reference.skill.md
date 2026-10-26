@@ -145,10 +145,10 @@ The `POST /site_publish/publish` endpoint requires:
 | `options.batch_size` | options object | Yes | Batch size: 20, 30, or 50 |
 | `options.overwrite_mode` | options object | Yes | `smart` or `force` |
 | `options.generate_mode` | options object | Yes | `default` or `full_static` |
-| `options.batch_number` | options object | Yes | Current batch number (starts at 1) |
+| `batch_number` | top level | Yes | Current upload batch number (starts at 1) |
 | `disable_streaming` | top level | No | `true` for JSON response, omit for SSE |
 
-**Critical**: `batch_number` MUST be inside `options`. Placing it at top level causes `Undefined array key "batch_number"`.
+**Current contract**: `batch_number` is a top-level field. The API normalizes it into internal options and still accepts the old `options.batch_number` form for compatibility.
 
 The `POST /site_publish/preparePublish` endpoint requires:
 
@@ -157,7 +157,7 @@ The `POST /site_publish/preparePublish` endpoint requires:
 | `options.batch_size` | options object | Yes | Batch size |
 | `options.overwrite_mode` | options object | Yes | Overwrite mode |
 | `options.generate_mode` | options object | Yes | Generate mode |
-| `options.batch_number` | options object | Yes | Batch number (1) |
+| `batch_number` | top level | Yes | Current preparation batch number (starts at 1) |
 
 Response fields: `has_more` (boolean), `total_batches` (number), `generated_pages` (number)
 
