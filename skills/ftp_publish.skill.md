@@ -14,6 +14,8 @@ FTP 密码由 API 服务端直接从账号级 `account_ftp_config` 表读取，�
 
 `preparePublish` 是分批生成状态机，不是一次调用必定创建任务。返回 `has_more=true` 时没有 `task_id` 是正常的中间状态：使用 `next_batch` 继续，并原样携带 `next_batch_type`、`total_generated`、`total_estimated`、`standard_pages_num`；静态批次从 1 开始递增 `static_batch_number`。必须继续到 `task_created=true`。只有同时满足 `task_ready=true` 且存在 `task_id` 才能开始上传；`no_changes=true` 表示无需上传并直接完成。不得把中间批次误报为任务表缺字段，不得绕过 MCP 改调完整发布接口。
 
+发布任务保存在 `publish_tasks` 数据库表，不依赖 PHP Session、Cookie 或 MCP 会话。取得真实 `task_id` 后，上传和后续状态查询都必须显式传同一个 ID；不能按“当前任务”猜测。第一批返回 `phase=generating_files`、`task_id=null` 是正常状态，不得诊断为 Session 丢失。
+
 ## [WARN] 【强制】发布确认机制（三重保障）
 
 **AI 在发布网站时，必须严格遵守以下 3 条规则，不得违反：**
