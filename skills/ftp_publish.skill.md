@@ -8,6 +8,8 @@ metadata: {"clawdbot":{"emoji":"[FTP]","requires":{"file":["scripts/config.json"
 
 Test FTP connection and publish your website to FTP server with pre-checks.
 
+本流程只用于用户明确要求“发布网站、发布站点、整站上线、FTP 发布”。如果用户要求发布文章或产品，尤其上下文包含 `article_id` 或 `product_id`，禁止读取 FTP 配置、测试 FTP 或调用整站发布；应返回文章/产品流程，只修改内容显示状态。
+
 ## [WARN] 【强制】发布确认机制（三重保障）
 
 **AI 在发布网站时，必须严格遵守以下 3 条规则，不得违反：**

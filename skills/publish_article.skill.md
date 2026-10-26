@@ -8,6 +8,10 @@ metadata: {"clawdbot":{"emoji":"[ARTICLE]","requires":{"file":["scripts/config.j
 
 优先调用 MCP 工具；MCP 不可用时才运行 `publish_article.py`。
 
+## 发布边界
+
+发布文章只把指定 `article_id` 的草稿状态改为显示。不得检查 FTP、站点域名或整站发布状态，不得调用任何 FTP/站点发布工具，也不得把结果说成“网站已发布”。已有 `article_id` 时直接沿用该 ID；不要重新创建文章。
+
 ## 固定流程
 
 1. 检查站点连接，收集标题、正文、摘要、作者、语言和分类。

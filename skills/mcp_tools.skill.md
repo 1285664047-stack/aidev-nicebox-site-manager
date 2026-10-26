@@ -45,6 +45,8 @@ metadata: {"clawdbot":{"emoji":"[MCP]"}}
 
 状态查询、检测和优化重试必须继续使用原 `operation_id` 或 `request_id`，不得因为切换通道重复创建任务。
 
+发布意图必须按对象分流：带 `article_id` 的发布只调用 `nicebox_publish_article`，带 `product_id` 的发布只调用 `nicebox_publish_product`；它们仅改变内容显示状态，不得检查或调用 FTP。只有用户明确要求发布整个网站/站点上线/FTP 发布时才使用站点发布工具。
+
 生成文章或产品封面前，先让用户选择图片比例，再向 `nicebox_generate_content_cover` 传 `aspect_ratio`；不得静默使用默认比例。网站 Logo 缺失时提示用户选择提供 URL、AI 生成或暂不设置；选择 AI 后询问 `1:1` 方形或 `5:2` 横版，再调用 `nicebox_generate_logo`，展示候选图并在用户接受后作为企业资料 `logo`。
 
 ## 网站生成进度
