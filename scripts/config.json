@@ -1,0 +1,23 @@
+{
+  "api_key": "",
+  "base_url": "",
+  "site_from": "",
+  "agent_code": "unknown",
+  "agent_version": "",
+  "distribution_channel": "git",
+  "skill_version": "0.3.30",
+  "site_info": {
+    "company_name": "",
+    "industry": "",
+    "business_scope": "",
+    "logo": "",
+    "advantages": "",
+    "phone": "",
+    "email": "",
+    "address": "",
+    "style": "",
+    "other": ""
+  },
+  "created_at": "",
+  "updated_at": ""
+}
