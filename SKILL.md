@@ -1,7 +1,7 @@
 ---
 name: website-manager
 description: Manage Nicebox AI websites through MCP tools with OpenClaw REST API scripts as fallback. Supports website generation, content drafts and previews, publishing, messages, and SEO/GEO detection and optimization.
-version: 0.3.31
+version: 0.3.33
 metadata: {"clawdbot":{"emoji":"[TOOL]","requires":{"file":["scripts/config.json"]}}}
 ---
 
@@ -155,6 +155,8 @@ python config_manager.py
 | [KEY] 设置 API Key | [set_key.skill.md](skills/set_key.skill.md) | 查看/修改 config.json 中的 API 密钥 |
 | [API-REF] API 参考 | [api_reference.skill.md](skills/api_reference.skill.md) | 完整 API 端点、参数、SSE 事件规范 |
 | [TROUBLE] 故障排除 | [troubleshooting.skill.md](skills/troubleshooting.skill.md) | SIGKILL、编码、FTP 404 等常见问题解决 |
+
+页面代码修改必须先读取 [page-edit-draft.md](prompts/page-edit-draft.md)，再按任务加载 `references/page-edit-library/` 中对应模块。不要一次加载全部模块，也不要直接复制 `AiPrompts.php` 的整站生成提示词。
 
 ## [INFO] 配置持久化
 

@@ -10,13 +10,25 @@ metadata: {"clawdbot":{"emoji":"[EDIT]"}}
 
 ## 流程
 
-1. 按 `page_code_read.skill.md` 选定页面并依次读取 metadata 和 sections/full。
-2. 明确目标区域和用户要求，只修改 `target_selector` 对应区域；复杂跨区域任务才使用 `target_type=full`。
-3. 修改前排除共享 Header/Footer 和系统保护节点。业务样式优先使用 Tailwind class。
+1. 按 `page_code_read.skill.md` 选定页面，读取 metadata 和 sections 定位目标区域；无论局部还是全页修改，校验前都必须再读取 full 完整原文。
+2. sections 只用于取得 `target_selector`，不能单独作为 `before_html`。只修改目标区域；复杂跨区域任务才使用 `target_type=full`。
+3. 在当前上下文基于完整原文生成完整 `after_html`，修改前排除共享 Header/Footer 和系统保护节点。业务样式优先使用 Tailwind class，不创建本地草稿文件。
 4. 新图片先调用 `nicebox_upload_images`，只能把返回的稳定 `image_url` 写入草稿。
 5. 生成完整 `after_html` 后展示修改摘要，调用 `nicebox_validate_page_change`。传入读取时的页面版本、Hash 和规则版本，不得用预览 HTML 作为 `before_html`。
 6. 校验失败时根据结构化 errors 修正草稿并重新校验；不能绕过错误。校验通过时说明“尚未保存”。
 7. MCP 不可用时使用普通 API 同名回退；业务校验失败不是网络失败，不得通过回退绕过。
+
+## 参数来源
+
+- `expected_version` 使用本次读取返回的 `content_version`。
+- `expected_hash` 使用本次读取返回的 `content_hash`。
+- `rules_version` 使用 full 读取结果中的 `rules_version`。
+- `before_html` 原样使用 full 读取结果中的 `html`。
+- `after_html` 是基于完整原文只修改目标范围后的完整文档。
+
+不得猜测参数名，不得把 `content_version/content_hash` 直接作为校验工具的参数名。MCP 可用时直接调用 MCP；只有工具不存在、服务不可达或宿主不支持 MCP 时，才使用 `api_tool.py` 普通 API 回退。
+
+同一次修改只读取一次 metadata、一次 sections 和一次 full，只有 `VERSION_CONFLICT` 才重新读取。正常仅向用户反馈“读取定位、草稿校验、预览确认”三个阶段，不展示规则文件读取、字段探测、哈希比对或内部命令。
 
 ## 宽度专用流程
 

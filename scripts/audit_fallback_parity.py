@@ -11,6 +11,7 @@ TOOLS_FILE = ROOT / "mcp-server" / "src" / "tools.ts"
 SCRIPT_DIR = pathlib.Path(__file__).resolve().parent
 MANIFEST_FILE = SCRIPT_DIR / "fallback_manifest.json"
 API_TOOL_FILE = SCRIPT_DIR / "api_tool.py"
+PROMPT_SYNC_SCRIPT = SCRIPT_DIR / "sync_page_prompt_library.py"
 
 PAGE_TOOLS = {
     "nicebox_list_pages": "listPages",
@@ -79,10 +80,34 @@ def main():
         if absent:
             page_contract_errors.append({"tool": tool, "missing": absent})
 
-    if missing or stale or missing_scripts or page_contract_errors:
-        print(json.dumps({"ok": False, "mcp_tool_count": len(tools), "fallback_count": len(manifest), "missing": missing, "stale": stale, "missing_scripts": missing_scripts, "page_contract_errors": page_contract_errors}, ensure_ascii=False, indent=2))
+    prompt_library_errors = []
+    canonical_prompt_dir = ROOT / "doc" / "workbuddy" / "页面修改能力" / "page-edit-prompts"
+    prompt_manifest_file = canonical_prompt_dir / "manifest.json"
+    prompt_manifest = {}
+    if not PROMPT_SYNC_SCRIPT.is_file() or not prompt_manifest_file.is_file():
+        prompt_library_errors.append("canonical prompt library or synchronization script is missing")
+    else:
+        prompt_manifest = json.loads(prompt_manifest_file.read_text(encoding="utf-8"))
+        prompt_files = ["manifest.json", *prompt_manifest.get("files", [])]
+        prompt_targets = [
+            ROOT / "nicebox-site-manager-main" / "references" / "page-edit-library",
+            ROOT / "workbuddy-connector" / "skills" / "nicebox-site-manager" / "references" / "page-edit-library",
+        ]
+        for relative in prompt_files:
+            source_file = canonical_prompt_dir / relative
+            if not source_file.is_file():
+                prompt_library_errors.append("missing canonical prompt file: %s" % relative)
+                continue
+            source_content = source_file.read_bytes()
+            for target in prompt_targets:
+                target_file = target / relative
+                if not target_file.is_file() or target_file.read_bytes() != source_content:
+                    prompt_library_errors.append("prompt library out of sync: %s" % target_file)
+
+    if missing or stale or missing_scripts or page_contract_errors or prompt_library_errors:
+        print(json.dumps({"ok": False, "mcp_tool_count": len(tools), "fallback_count": len(manifest), "missing": missing, "stale": stale, "missing_scripts": missing_scripts, "page_contract_errors": page_contract_errors, "prompt_library_errors": prompt_library_errors}, ensure_ascii=False, indent=2))
         return 1
-    print(json.dumps({"ok": True, "mcp_tool_count": len(tools), "fallback_count": len(manifest), "page_tool_count": len(PAGE_TOOLS), "message": "所有 MCP 工具均已登记普通 API 回退，页面修改工具已同步到普通 API 与两个 Skill"}, ensure_ascii=False, indent=2))
+    print(json.dumps({"ok": True, "mcp_tool_count": len(tools), "fallback_count": len(manifest), "page_tool_count": len(PAGE_TOOLS), "prompt_library_version": prompt_manifest["library_version"], "message": "所有 MCP 工具均已登记普通 API 回退，页面修改工具与提示词库已同步到普通 API 和两个 Skill"}, ensure_ascii=False, indent=2))
     return 0
 
 if __name__ == "__main__": sys.exit(main())
