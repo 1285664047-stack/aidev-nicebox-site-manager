@@ -40,6 +40,7 @@ metadata: {"clawdbot":{"emoji":"[MCP]"}}
 | 文章/产品排序和永久删除 | 4 个 update/delete 工具 | `update_content_sort.py`、`delete_content.py`；必须携带快照和 `--confirmed` |
 | 文章/产品正文生成 | `nicebox_generate_article_content`、`nicebox_generate_product_content` | `api_tool.py TOOL --args-json JSON` |
 | 封面、Logo 和云资源库 | `nicebox_generate_content_cover`、`nicebox_generate_logo`、`nicebox_upload_images` | `api_tool.py nicebox_generate_content_cover`、`generate_logo.py`、`upload_image.py` |
+| 共享 Header/Footer | `nicebox_get_shared_header/footer`、`nicebox_create/get/commit_shared_section*`、共享备份工具 | `api_tool.py` 同名工具 |
 | 草稿、内容预览和正式显示 | 6 个 article/product draft/publish/preview 工具 | `publish_article.py`、`publish_product.py`；草稿后自动预览，确认后才正式显示 |
 | 留言和整站预览 | `nicebox_list_messages`、`nicebox_generate_preview` | `api_tool.py TOOL --args-json JSON` |
 | FTP 配置、测试、准备、上传、状态和取消 | 6 个 FTP/publish 工具 | `ftp_manager.py get-config/test-connection/prepare/start/get-task-status/cancel-task` |

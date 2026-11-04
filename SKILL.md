@@ -1,7 +1,7 @@
 ---
 name: website-manager
 description: Manage Nicebox AI websites through MCP tools with OpenClaw REST API scripts as fallback. Supports website generation, content drafts and previews, publishing, messages, and SEO/GEO detection and optimization.
-version: 0.3.39
+version: 0.4.0
 metadata: {"clawdbot":{"emoji":"[TOOL]","requires":{"file":["scripts/config.json"]}}}
 ---
 
@@ -141,6 +141,7 @@ python config_manager.py
 | [EDIT] 页面修改草稿与校验 | [page_code_validate.skill.md](skills/page_code_validate.skill.md) | 在宿主上下文生成页面草稿并做确定性校验，尚不保存 |
 | [SAVE] 页面预览保存与回退 | [page_change_workflow.skill.md](skills/page_change_workflow.skill.md) | 临时预览、当次确认保存、幂等查询和历史版本回退 |
 | [COMPONENT] 动态组件与复杂页面 | [page_dynamic_components.skill.md](skills/page_dynamic_components.skill.md) | 产品、文章、FAQ、分类、搜索、表单和 JS 归属诊断 |
+| [SHARED] 共享头尾 | [shared_sections.skill.md](skills/shared_sections.skill.md) | 共享 Header/Footer 独立预览、保存和回退 |
 | [SEO] SEO/GEO 检测优化 | [seo_geo.skill.md](skills/seo_geo.skill.md) | 查看报告、确认检测、一键优化和复检 |
 
 ### [DEPLOY] 发布与部署
@@ -162,6 +163,8 @@ python config_manager.py
 页面响应式修改默认只使用两档：无前缀 class 为 `< 768px` 手机端，`md:*` 为 `>= 768px` 电脑端。未指定终端时必须同时保证两端排版和交互正常；指定只改一端时，另一端的最终渲染语义、专属结构和交互必须保持不变。
 
 图片上传工具返回成功和非空 `image_url` 后即视为图片已上传并登记。原样写入 HTML 或业务数据后直接进入正常页面校验和预览；禁止再探测 CDN 可访问性、Referer、防盗链、时间戳、素材列表或登记状态，也不得重复上传。
+
+共享 Header/Footer 修改必须读取 `skills/shared_sections.skill.md` 并走专用工具；至少展示同语言首页和普通内页样本预览，确认后独立保存并创建共享备份。共享保存不发布，发布必须重新走 FTP 确认。
 
 ## [INFO] 配置持久化
 
