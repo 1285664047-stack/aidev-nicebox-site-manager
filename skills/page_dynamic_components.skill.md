@@ -1,6 +1,6 @@
 # 动态组件与复杂页面修改
 
-修改产品、文章、FAQ、分类、搜索、分页、详情模板或表单前，必须先调用 `nicebox_diagnose_page_components`。MCP 不可用时使用：
+修改产品、文章、FAQ、分类、搜索、分页、详情模板或表单前，必须先调用 `nicebox_diagnose_page_components`，并始终传入当前目标的精确 `target_selector`。MCP 不可用时使用：
 
 ```bash
 python scripts/api_tool.py nicebox_diagnose_page_components --args-json '{"page_id":123,"target_selector":"#target"}'
@@ -8,8 +8,9 @@ python scripts/api_tool.py nicebox_diagnose_page_components --args-json '{"page_
 
 ## 诊断结果
 
-- `errors`：必须修复后才能校验草稿，不能删除动态字段来规避。
-- `components`：展示组件类型、选择器、模板项数量和有效性。
+- 先按 `target_selector` 和当前任务过滤诊断结果。只处理目标区域本身及其必要依赖；其他区域的 `errors/warnings/components/scripts` 属于旁路信息，不展示、不修复、不写入草稿摘要。
+- `errors`：仅当前目标或其必要依赖中的错误必须修复后才能校验草稿，不能删除动态字段来规避。其他区域的既有错误不能阻止本次无关修改；若服务端因此拒绝校验，只提示“存在目标范围外的既有校验问题，当前修改未保存”，不得展开无关问题详情或顺手修复。
+- `components`：只展示当前目标组件的类型、选择器、模板项数量和有效性。
 - `scripts[].ownership=local`：仅当属于当前目标区域时才可随区域修改。
 - `shared`：同时服务多个区域，提供上下文但原样保留。
 - `unknown`：无法可靠确认归属，原样保留。
@@ -26,5 +27,8 @@ python scripts/api_tool.py nicebox_diagnose_page_components --args-json '{"page_
 - 产品详情：读取规则库中的正式字段，保留 `product_detail` 根节点以及已有的 `cover/thumbnail/thumbnail-item/title/categoryname/price/description/content/parameters` 和附件链路。允许多个顶层兄弟 `product_detail` 区域，禁止相互嵌套。
 - 文章详情：保留第一个 `news_detail` 根节点内已有的 `title/publish/author/source_container/source/views/cover/description/content`。当前后端只填充第一个根节点，不得把标题和正文拆成多个顶层 `news_detail` 区域。
 - 详情正文和参数是运行时富文本槽位，FAQ 会由后端追加；不能把某条预览数据、内容 ID 或预览地址固化进模板。关联列表必须留在 `content` 外并继续使用标准产品/文章列表链路。
+- `data-config` 必须设置在实际被配置的动态列表元素自身：产品为 `[data-type="products"]`，文章为 `[data-type="newslist"]`，FAQ 为 `[data-type="faq"]`。旧 `faqlist` 只兼容读取，新增统一使用 `faq`；不得把配置写到外层普通容器、目标 selector 根节点或读取片段根节点。
+- 修改 `limit/showpage/category_id` 时先定位唯一目标动态列表，只合并更新该元素自身的 `data-config` 并保留未知字段。存在多个候选且用户未指明时必须让用户选择。
+- 禁止动态列表根节点嵌套：`products`、`newslist`、`faq/faqlist` 不得嵌套同类列表，不同类型的独立动态列表也不得彼此包裹；多个列表使用顶层兄弟区域。
 
 表单确认保存时服务端扫描完整页面表单，提取标题、字段、按钮和验证规则，按 `data-sign` 创建或更新 `forms`，并把新签名回填页面 HTML。草稿与临时预览不创建表单。组件草稿通过后仍执行 `validate -> preview -> 用户确认 -> commit`，保存不等于发布；保存后以服务端最终页面版本为准。

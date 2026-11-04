@@ -54,7 +54,7 @@ metadata: {"clawdbot":{"emoji":"[MCP]"}}
 
 发布意图必须按对象分流：带 `article_id` 的发布只调用 `nicebox_publish_article`，带 `product_id` 的发布只调用 `nicebox_publish_product`；它们仅改变内容显示状态，不得检查或调用 FTP。只有用户明确要求发布整个网站/站点上线/FTP 发布时才使用站点发布工具。
 
-生成文章或产品封面前，先让用户选择图片比例，再向 `nicebox_generate_content_cover` 传 `aspect_ratio`；不得静默使用默认比例。文章封面、产品封面和 Logo 均支持 `3:2`、`4:3`、`3:4`、`2:3`。网站 Logo 缺失时提示用户选择提供 URL、AI 生成或暂不设置；选择 AI 后让用户选择比例并调用 `nicebox_generate_logo`。候选图被用户接受后必须调用 `nicebox_upload_images`：Logo 用 `logo`，产品封面用 `product_cover`，文章封面用 `article_cover`，其他图片用 `image`；图片 URL 放入 `image_urls` 数组，用户指定 `folder_name` 时使用自定义目录。只把上传返回的稳定 `image_url` 写入业务数据。
+生成文章或产品封面前，先让用户选择图片比例，再向 `nicebox_generate_content_cover` 传 `aspect_ratio`；不得静默使用默认比例。文章封面、产品封面和 Logo 均支持 `3:2`、`4:3`、`3:4`、`2:3`。网站 Logo 缺失时提示用户选择提供 URL、AI 生成或暂不设置；选择 AI 后让用户选择比例并调用 `nicebox_generate_logo`。候选图被用户接受后必须调用 `nicebox_upload_images`：Logo 用 `logo`，产品封面用 `product_cover`，文章封面用 `article_cover`，其他图片用 `image`；图片 URL 放入 `image_urls` 数组，用户指定 `folder_name` 时使用自定义目录。上传成功后只把返回的 `image_url` 原样写入业务数据，并立即继续草稿或预览流程；禁止对回调 URL 做 CDN 下载、可访问性、Referer、防盗链、时间戳、素材列表或登记状态二次验证，也不得重复上传。
 
 ## 网站生成进度
 
