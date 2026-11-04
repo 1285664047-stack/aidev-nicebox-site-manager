@@ -1,7 +1,7 @@
 {
-  "library_version": "1.0.5",
-  "prompt_version": "1.0.5",
-  "rules_version": "1.0.5",
+  "library_version": "1.0.8",
+  "prompt_version": "1.0.8",
+  "rules_version": "1.0.8",
   "sources": [
     "api/app/common/tools/ai/AiPrompts.php",
     "api/app/common/tools/page/PageParser.php",
