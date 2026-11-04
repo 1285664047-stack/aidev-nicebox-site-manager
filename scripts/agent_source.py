@@ -7,7 +7,7 @@ import re
 
 
 CONFIG_FILE = os.path.join(os.path.dirname(__file__), 'config.json')
-SKILL_VERSION = '0.3.33'
+SKILL_VERSION = '0.3.36'
 
 
 def _config():

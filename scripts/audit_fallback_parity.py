@@ -12,6 +12,9 @@ SCRIPT_DIR = pathlib.Path(__file__).resolve().parent
 MANIFEST_FILE = SCRIPT_DIR / "fallback_manifest.json"
 API_TOOL_FILE = SCRIPT_DIR / "api_tool.py"
 PROMPT_SYNC_SCRIPT = SCRIPT_DIR / "sync_page_prompt_library.py"
+PAGE_READ_SERVICE = ROOT / "api" / "app" / "openclaw" / "service" / "PageCodeReadService.php"
+PAGE_DIAGNOSTIC_SERVICE = ROOT / "api" / "app" / "openclaw" / "service" / "PageComponentDiagnosticService.php"
+MCP_INSTRUCTIONS_FILE = ROOT / "mcp-server" / "src" / "instructions.ts"
 
 PAGE_TOOLS = {
     "nicebox_list_pages": "listPages",
@@ -103,6 +106,26 @@ def main():
                 target_file = target / relative
                 if not target_file.is_file() or target_file.read_bytes() != source_content:
                     prompt_library_errors.append("prompt library out of sync: %s" % target_file)
+
+        page_read_source = PAGE_READ_SERVICE.read_text(encoding="utf-8")
+        for constant, manifest_key in [("RULES_VERSION", "rules_version"), ("PROMPT_VERSION", "prompt_version")]:
+            match = re.search(r"public const %s\s*=\s*['\"]([^'\"]+)['\"]" % constant, page_read_source)
+            expected = str(prompt_manifest.get(manifest_key, ""))
+            if not match or match.group(1) != expected:
+                actual = match.group(1) if match else "missing"
+                prompt_library_errors.append("%s mismatch: backend=%s manifest=%s" % (constant, actual, expected))
+
+        diagnostic_source = PAGE_DIAGNOSTIC_SERVICE.read_text(encoding="utf-8")
+        mcp_instruction_source = MCP_INSTRUCTIONS_FILE.read_text(encoding="utf-8")
+        required_detail_contracts = [
+            ("PRODUCT_DETAIL_NESTED_ROOT_FORBIDDEN", diagnostic_source, "backend product detail nesting rule"),
+            ("NEWS_DETAIL_MULTIPLE_ROOTS_FORBIDDEN", diagnostic_source, "backend news detail single-root rule"),
+            ("多个顶层兄弟 product_detail", mcp_instruction_source, "MCP product detail sibling-root instruction"),
+            ("只填充第一个根节点", mcp_instruction_source, "MCP news detail first-root instruction"),
+        ]
+        for token, source_text, label in required_detail_contracts:
+            if token not in source_text:
+                prompt_library_errors.append("missing detail contract: %s" % label)
 
     if missing or stale or missing_scripts or page_contract_errors or prompt_library_errors:
         print(json.dumps({"ok": False, "mcp_tool_count": len(tools), "fallback_count": len(manifest), "missing": missing, "stale": stale, "missing_scripts": missing_scripts, "page_contract_errors": page_contract_errors, "prompt_library_errors": prompt_library_errors}, ensure_ascii=False, indent=2))
