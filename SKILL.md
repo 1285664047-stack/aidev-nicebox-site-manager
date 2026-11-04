@@ -1,7 +1,7 @@
 ---
 name: website-manager
 description: Manage Nicebox AI websites through MCP tools with OpenClaw REST API scripts as fallback. Supports website generation, content drafts and previews, publishing, messages, and SEO/GEO detection and optimization.
-version: 0.3.36
+version: 0.3.39
 metadata: {"clawdbot":{"emoji":"[TOOL]","requires":{"file":["scripts/config.json"]}}}
 ---
 
@@ -20,6 +20,7 @@ metadata: {"clawdbot":{"emoji":"[TOOL]","requires":{"file":["scripts/config.json
 7. 用户更换 API Key、重新连接或切换站点后，立即废弃旧站点资料及所有文章、产品、报告、建站和发布任务 ID。下一次操作必须重新查询站点状态，展示实际站点名称和域名并等待确认；确认前不得写入。
 7. 详细映射见 [mcp_tools.skill.md](skills/mcp_tools.skill.md)。
 8. WorkBuddy 环境必须优先使用 MCP 异步建站工具，不得运行本地 `_full_gen.py`。仅不支持 MCP 的 Legacy 宿主才可使用该脚本；回退时必须 `python -u` 直接前台执行，禁止追加 `tail`、管道或输出捕获。
+9. 每次回复只处理用户最新消息对应的当前任务和目标对象。工具返回的无关既有问题、旧草稿或待发布内容不得进入回复、不得自动修复；只有它会直接阻止当前任务时才说明。旧文章/产品草稿保持休眠，用户明确恢复、预览或发布同一草稿时才重新提示。
 
 Base URL:
 
@@ -157,6 +158,10 @@ python config_manager.py
 | [TROUBLE] 故障排除 | [troubleshooting.skill.md](skills/troubleshooting.skill.md) | SIGKILL、编码、FTP 404 等常见问题解决 |
 
 页面代码修改必须先读取 [page-edit-draft.md](prompts/page-edit-draft.md)，再按任务加载 `references/page-edit-library/` 中对应模块。不要一次加载全部模块，也不要直接复制 `AiPrompts.php` 的整站生成提示词。
+
+页面响应式修改默认只使用两档：无前缀 class 为 `< 768px` 手机端，`md:*` 为 `>= 768px` 电脑端。未指定终端时必须同时保证两端排版和交互正常；指定只改一端时，另一端的最终渲染语义、专属结构和交互必须保持不变。
+
+图片上传工具返回成功和非空 `image_url` 后即视为图片已上传并登记。原样写入 HTML 或业务数据后直接进入正常页面校验和预览；禁止再探测 CDN 可访问性、Referer、防盗链、时间戳、素材列表或登记状态，也不得重复上传。
 
 ## [INFO] 配置持久化
 
