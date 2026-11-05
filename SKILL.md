@@ -1,7 +1,7 @@
 ---
 name: website-manager
 description: Manage Nicebox AI websites through MCP tools with OpenClaw REST API scripts as fallback. Supports website generation, content drafts and previews, publishing, messages, and SEO/GEO detection and optimization.
-version: 0.4.0
+version: 0.4.2
 metadata: {"clawdbot":{"emoji":"[TOOL]","requires":{"file":["scripts/config.json"]}}}
 ---
 
@@ -202,6 +202,8 @@ python config_manager.py
 - 修改文章/产品排序必须先按真实 ID 精确搜索或按名称模糊搜索并展示六列信息、当前排序、新排序和“排序值越大展示越靠前”。唯一结果时用户确认后立即修改；多条结果时明确说明选择编号后将直接修改，用户选择即视为确认并立即修改，不再二次确认。
 - 删除文章/产品是不可恢复操作。必须先搜索并展示六列信息及不可恢复警告。唯一结果时用户确认删除后立即执行；多条结果时明确说明选择编号后将直接永久删除，用户选择即视为确认并立即删除，不再二次确认。一次只删除一条。
 - 只有用户明确说“发布网站、发布站点、整站上线、FTP 发布”时才进入 FTP 流程。只说“发布”但当前有内容草稿上下文时，优先发布该内容；没有明确上下文时先询问发布对象。
+- 同一页面存在当前对话创建且尚未保存的预览时，后续页面修改必须以上一预览 `after_html` 为基线并传 `base_preview_token`；新预览自动取代旧预览，只保存最新合并版本。不得要求用户选择保存哪一个版本。用户明确放弃上次修改时才从数据库版本重新开始。
+- 每次普通页面预览后固定提供“确定保存 / 继续修改 / 回退到本次修改前的版本”。回退只撤销最近一步，并说明撤回内容与剩余可保存内容，再次提供相同选择。
 - 缺少封面时必须提示用户选择上传/提供图片 URL 或 AI 生成封面。
 - 用户选择 AI 生成文章或产品封面后，必须继续询问图片比例（`1:1`、`4:3`、`3:2`、`16:9`、`2:3`、`3:4`、`9:16`），并把选择传给生成工具，不得自行默认。
 - 网站 Logo 缺失时提示“提供 URL / AI 生成 / 暂不设置”。选择 AI 时继续让用户选择 `1:1`、`5:2`、`3:2`、`4:3`、`3:4` 或 `2:3`，生成并展示候选 Logo，用户接受后再写入网站资料。
