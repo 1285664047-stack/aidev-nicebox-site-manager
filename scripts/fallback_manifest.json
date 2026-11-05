@@ -15,6 +15,7 @@
   "nicebox_create_page_width_preview": "api_tool.py nicebox_create_page_width_preview",
   "nicebox_get_page_preview": "api_tool.py nicebox_get_page_preview",
   "nicebox_abandon_page_preview": "api_tool.py nicebox_abandon_page_preview",
+  "nicebox_rollback_page_preview_step": "api_tool.py nicebox_rollback_page_preview_step",
   "nicebox_commit_page_change": "api_tool.py nicebox_commit_page_change",
   "nicebox_commit_page_width_settings": "api_tool.py nicebox_commit_page_width_settings",
   "nicebox_get_page_change_operation": "api_tool.py nicebox_get_page_change_operation",

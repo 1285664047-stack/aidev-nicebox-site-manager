@@ -28,6 +28,7 @@ TOOLS = {
     "nicebox_create_page_width_preview": ("POST", "/site_pages/createPageWidthPreview"),
     "nicebox_get_page_preview": ("GET", "/site_pages/getPagePreview"),
     "nicebox_abandon_page_preview": ("POST", "/site_pages/abandonPagePreview"),
+    "nicebox_rollback_page_preview_step": ("POST", "/site_pages/rollbackPagePreviewStep"),
     "nicebox_commit_page_change": ("POST", "/site_pages/commitPageChange"),
     "nicebox_commit_page_width_settings": ("POST", "/site_pages/commitPageWidthSettings"),
     "nicebox_get_page_change_operation": ("GET", "/site_pages/getPageChangeOperation"),

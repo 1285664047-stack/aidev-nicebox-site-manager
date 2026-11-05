@@ -29,6 +29,7 @@ PAGE_TOOLS = {
     "nicebox_create_page_width_preview": "createPageWidthPreview",
     "nicebox_get_page_preview": "getPagePreview",
     "nicebox_abandon_page_preview": "abandonPagePreview",
+    "nicebox_rollback_page_preview_step": "rollbackPagePreviewStep",
     "nicebox_commit_page_change": "commitPageChange",
     "nicebox_commit_page_width_settings": "commitPageWidthSettings",
     "nicebox_get_page_change_operation": "getPageChangeOperation",
