@@ -9,16 +9,19 @@ metadata: {"clawdbot":{"emoji":"[MCP]"}}
 ## MCP Server 连接
 
 - Transport：Streamable HTTP
-- URL：`https://aidev.nicebox.cn/mcp`
+- 主 URL：`https://ai.nicebox.cn/mcp`
+- 备用 URL：`https://aidev.nicebox.cn/mcp`
 - Authentication：`Authorization: Bearer <API_KEY>`
 - API Key 从 `{baseDir}/scripts/config.json` 的 `api_key` 读取，不得输出给用户或写入日志。
-- 宿主没有发现 `nicebox_*` 工具时，先使用技能依赖中声明的上述端点注册或连接；不要询问用户提供 MCP Server 地址。
-- 只有默认端点连接失败且宿主无法使用 REST API 回退，或用户明确要求自定义端点时，才向用户询问其他地址。
+- 新 API Key 或新连接始终先用主 URL 完成 initialize 和 `nicebox_get_site_status` 校验。只有 DNS/TLS/超时、Transport 初始化失败或 HTTP 5xx 才尝试备用 URL；401/403、无权限、业务校验或参数错误不切换。
+- 通道成功后固定为当前 Key 本次连接的专属通道。换 Key、断开重连或当前通道确实不可用时才重新从主 URL 探测；不得明文保存 Key 与通道映射。
+- 宿主只支持单 URL 时默认注册主 URL；主 URL 不可用后使用同一 Key 重连备用 URL。禁止同时注册两个包含同名 `nicebox_*` 工具的 Server。
+- 写操作结果未知时保留原通道和原任务标识先查状态，不得跨通道重复提交。
 
 ## 调用优先级
 
 1. 宿主存在对应 `nicebox_*` MCP 工具时，优先调用 MCP。
-2. MCP 工具不存在、MCP Server 不可达或宿主不支持 MCP 时，才运行 `scripts/` 中对应 Python 脚本，通过普通 OpenClaw REST API 完成同一操作。
+2. 主、备用 MCP Server 均不可达或宿主不支持 MCP 时，才运行 `scripts/` 中对应 Python 脚本，通过普通 OpenClaw REST API 完成同一操作。
 3. MCP 返回业务错误（参数错误、没有权限、没有可优化项、用户未确认）时，不得为了绕过校验而回退 REST API。
 4. 回退前向用户简要说明连接器工具暂不可用，将使用同一账号 API Key 调用 Nicebox API；不得显示 API Key。
 5. MCP 与 API 的成功标准相同：只有结构化结果明确成功，才能告诉用户成功。

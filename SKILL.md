@@ -1,7 +1,7 @@
 ---
 name: website-manager
 description: Manage Nicebox AI websites through MCP tools with OpenClaw REST API scripts as fallback. Supports website generation, content drafts and previews, publishing, messages, and SEO/GEO detection and optimization.
-version: 0.4.6
+version: 0.4.7
 metadata: {"clawdbot":{"emoji":"[TOOL]","requires":{"file":["scripts/config.json"]}}}
 ---
 
@@ -11,10 +11,12 @@ metadata: {"clawdbot":{"emoji":"[TOOL]","requires":{"file":["scripts/config.json
 
 ## [ROUTE] 调用通道
 
-1. Nicebox MCP Server 使用 Streamable HTTP，默认地址固定为 `https://aidev.nicebox.cn/mcp`，并已在 `agents/openai.yaml` 声明。连接时使用 `Authorization: Bearer <API_KEY>`，其中 API Key 从 `scripts/config.json` 的 `api_key` 读取，禁止在对话或日志中展示。
-2. 优先使用宿主已经注册的 `nicebox_*` MCP 工具。若宿主支持技能依赖自动注册，应直接使用上述默认地址连接，不要询问用户提供 MCP Server 地址。
-3. 宿主没有自动注册能力但允许添加 MCP Server 时，使用上述默认地址配置，不要让用户重复选择连接地址。只有用户明确要求覆盖默认端点时才询问新地址。
-4. 只有工具不存在、默认 MCP Server 不可达或宿主不支持 MCP 时，才使用 `scripts/` 普通 API 脚本；不要因为宿主尚未注册工具就先向用户询问地址。
+1. Nicebox MCP Server 使用 Streamable HTTP。主通道为 `https://ai.nicebox.cn/mcp`，备用通道为 `https://aidev.nicebox.cn/mcp`；`agents/openai.yaml` 只声明主通道。连接时使用同一个 `Authorization: Bearer <API_KEY>`，API Key 从 `scripts/config.json` 读取，禁止在对话或日志中展示。
+2. 每次新 API Key 或新连接先请求主通道并完成 MCP initialize 与站点状态校验。只有主通道发生 DNS/TLS/连接超时、Transport 初始化失败或 HTTP 5xx 等服务不可用，才用同一 Key 尝试备用通道。401/403、API Key 无效、站点无权访问、参数/确认错误及其他业务错误不得触发切换。
+3. 任一通道校验成功后，将其作为当前 API Key 在本次连接生命周期内的专属通道；后续所有工具和状态轮询保持同一通道。只有该通道后来确实不可用、API Key 更换或连接重建时才重新按“主通道 → 备用通道”探测。不得显示 Key，不得把 Key 作为缓存键明文保存。
+4. 优先使用宿主已经注册的 `nicebox_*` MCP 工具。宿主支持自动故障切换时按上述顺序处理；宿主只支持单一 MCP URL 时默认连接主通道，主通道不可用后引导其使用同一 Key 重新连接备用通道，不得同时注册两组同名工具。
+5. 通道切换前若写操作结果不明确，先在原通道用原 `operation_id/request_id/task_id` 查询；不得在另一通道重复创建草稿、任务、发布或其他写操作。业务错误不得通过切换通道绕过。
+6. 只有两个 MCP 通道都不可达或宿主不支持 MCP 时，才使用 `scripts/` 普通 API 脚本；不要因为宿主尚未注册工具就先向用户询问地址。
 5. 参数错误、权限不足、确认缺失等业务错误不能通过切换 REST API 绕过。
 6. 切换回退通道前简要告知用户，但不得展示 API Key。
 7. 用户更换 API Key、重新连接或切换站点后，立即废弃旧站点资料及所有文章、产品、报告、建站和发布任务 ID。下一次操作必须重新查询站点状态，展示实际站点名称和域名并等待确认；确认前不得写入。
