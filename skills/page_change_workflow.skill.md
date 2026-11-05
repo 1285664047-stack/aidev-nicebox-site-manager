@@ -13,7 +13,7 @@ metadata: {"clawdbot":{"emoji":"[SAVE]"}}
 1. 草稿通过 `nicebox_validate_page_change` 后调用 `nicebox_create_page_preview`，不能把校验成功当作保存成功。
 2. 展示 `preview_url`、修改摘要、影响范围和服务端返回的 `expires_at`，并说明尚未保存、尚未发布。不得根据本地时间自行换算剩余分钟；会话恢复、用户询问当前预览或需要核对令牌状态时，调用 `nicebox_get_page_preview`，不能使用旧缓存猜测。
 3. 用户继续修改同一页面时，调用 `nicebox_get_page_preview` 取得旧预览 `after_html`，以此为基础继续修改，并把旧令牌作为 `base_preview_token` 创建新预览。新预览自动取代旧预览，只保存最新合并版本。仅当用户明确要求放弃上次修改时才调用 `nicebox_abandon_page_preview`。
-4. 每次预览后固定提示：①确定保存；②继续修改；③回退到本次修改前的版本。
+4. 每次预览后优先使用宿主原生结构化提问能力，显示“请选择下一步操作”和三个可点击单选项：确定保存、继续修改、回退到本次修改前的版本。原生能力可用时不得重复输出编号 Markdown 选项；宿主不支持时才使用文本回退。MCP 使用响应 `choices` 的 action，普通 API 回退必须提供相同语义。
 5. 用户选择回退时调用 `nicebox_rollback_page_preview_step`，展示 `reverted_change` 和 `remaining_changes`，恢复后的预览仍提供三个选项；不得让用户选择冲突版本。
 6. 用户针对当前预览明确确认保存后，生成唯一 `operation_id` 并调用 `nicebox_commit_page_change(confirmed=true)`。
 7. 成功后展示新版本和 backup_id，明确网站尚未发布。
