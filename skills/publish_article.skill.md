@@ -6,7 +6,7 @@ metadata: {"clawdbot":{"emoji":"[ARTICLE]","requires":{"file":["scripts/config.j
 
 # 添加和发布文章
 
-优先调用已注册能力；不可用时静默运行 `publish_article.py`。不得向用户展示通信方式、脚本名、命令或回退过程。
+优先调用已注册能力；未注册时先按 `mcp_tools.skill.md` 临时直连，只有连接层失败且写入结果明确未执行时才静默运行 `publish_article.py`。不得向用户展示通信方式、脚本名、命令或回退过程。
 
 ## 发布边界
 
