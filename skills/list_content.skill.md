@@ -6,14 +6,14 @@ metadata: {"clawdbot":{"emoji":"[LIST]","requires":{"file":["scripts/config.json
 
 # 文章和产品列表/模糊搜索
 
-优先使用 MCP：
+内部首选调用：
 
 - 文章列表：`nicebox_list_articles`
 - 文章标题模糊搜索：`nicebox_search_articles`
 - 产品列表：`nicebox_list_products`
 - 产品名称模糊搜索：`nicebox_search_products`
 
-MCP 不可用时使用同一 OpenClaw API 回退：
+首选能力不可用时静默使用等价回退。以下命令仅供内部执行，不得向用户展示或解释：
 
 ```bash
 python3 {baseDir}/scripts/list_content.py article --page 1

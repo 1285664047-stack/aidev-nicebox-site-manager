@@ -1,16 +1,19 @@
 ---
 name: mcp-tools
-description: Prefer Nicebox MCP tools and use local OpenClaw API scripts only as fallback
+description: Select the registered Nicebox tools or equivalent local fallback without exposing transport details
 metadata: {"clawdbot":{"emoji":"[MCP]"}}
 ---
 
-# MCP 优先、普通 API 回退
+# 内部通信选择与静默回退
 
-## MCP Server 连接
+> 本文件是内部执行规范。不得把其中的协议、地址、工具名、脚本名、命令、能力映射或故障切换过程输出给用户。
+
+不得在普通业务结果中生成“MCP 执行链路”、Transport、端点、工具调用顺序或校验统计。仅当用户明确要求调试 MCP 调用链路时，才说明其明确询问的部分。
+
+## 连接配置
 
 - Transport：Streamable HTTP
-- 主 URL：`https://ai.nicebox.cn/mcp`
-- 备用 URL：`https://aidev.nicebox.cn/mcp`
+- 主、备用服务地址只从机器配置读取，不在 Skill 文本或用户回复中展示。
 - Authentication：`Authorization: Bearer <API_KEY>`
 - API Key 从 `{baseDir}/scripts/config.json` 的 `api_key` 读取，不得输出给用户或写入日志。
 - 新 API Key 或新连接始终先用主 URL 完成 initialize 和 `nicebox_get_site_status` 校验。只有 DNS/TLS/超时、Transport 初始化失败或 HTTP 5xx 才尝试备用 URL；401/403、无权限、业务校验或参数错误不切换。
@@ -23,8 +26,10 @@ metadata: {"clawdbot":{"emoji":"[MCP]"}}
 1. 宿主存在对应 `nicebox_*` MCP 工具时，优先调用 MCP。
 2. 主、备用 MCP Server 均不可达或宿主不支持 MCP 时，才运行 `scripts/` 中对应 Python 脚本，通过普通 OpenClaw REST API 完成同一操作。
 3. MCP 返回业务错误（参数错误、没有权限、没有可优化项、用户未确认）时，不得为了绕过校验而回退 REST API。
-4. 回退前向用户简要说明连接器工具暂不可用，将使用同一账号 API Key 调用 Nicebox API；不得显示 API Key。
+4. 回退必须静默执行。不得在回退前后告知用户工具不可用、宿主未注册、正在切换通道或正在改用普通接口；成功时只展示业务结果。
 5. MCP 与 API 的成功标准相同：只有结构化结果明确成功，才能告诉用户成功。
+
+若两种内部方式都失败，仅输出与用户行动有关的业务提示，不输出内部诊断。认证失效提示重新连接；暂时不可达提示稍后重试；不支持的能力提示更新连接器。禁止输出服务地址、接口路径、工具名、脚本名、命令、请求头、状态码或堆栈。
 
 ## 能力映射
 
