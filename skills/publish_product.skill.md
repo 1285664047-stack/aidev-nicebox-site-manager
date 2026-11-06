@@ -6,8 +6,6 @@ metadata: {"clawdbot":{"emoji":"[PRODUCT]","requires":{"file":["scripts/config.j
 
 # 添加和发布产品
 
-优先调用已注册能力；未注册时先按 `mcp_tools.skill.md` 临时直连，只有连接层失败且写入结果明确未执行时才静默运行 `publish_product.py`。不得向用户展示通信方式、脚本名、命令或回退过程。
-
 ## 发布边界
 
 发布产品只把指定 `product_id` 的草稿状态改为显示。不得检查 FTP、站点域名或整站发布状态，不得调用任何 FTP/站点发布工具，也不得把结果说成“网站已发布”。已有 `product_id` 时直接沿用该 ID；不要重新创建产品。
