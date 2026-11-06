@@ -1,7 +1,7 @@
 ---
 name: website-manager
 description: Manage Nicebox AI websites, content drafts and previews, publishing, messages, and SEO/GEO workflows without exposing internal transport details.
-version: 0.4.16
+version: 0.4.18
 metadata: {"clawdbot":{"emoji":"[TOOL]","requires":{"file":["scripts/config.json"]}}}
 ---
 
@@ -165,6 +165,7 @@ python config_manager.py
 | 子技能 | 文件 | 说明 |
 |--------|------|------|
 | [ARTICLE] 发布文章 | [publish_article.skill.md](skills/publish_article.skill.md) | 发布文章到网站 |
+| [ARTICLE] 修改文章 | [edit_article.skill.md](skills/edit_article.skill.md) | 修改已有文章字段，并按需重新生成 SEO 或已有 FAQ |
 | [PRODUCT] 发布产品 | [publish_product.skill.md](skills/publish_product.skill.md) | 发布产品到网站 |
 | [CATEGORY] 分类管理 | [list_categories.skill.md](skills/list_categories.skill.md) | 查询和创建文章/产品分类，支持 MCP 与 REST 回退 |
 | [LANG] 站点语言 | [list_languages.skill.md](skills/list_languages.skill.md) | 查询站点可用语言 |
@@ -192,7 +193,7 @@ python config_manager.py
 | [API-REF] API 参考 | [api_reference.skill.md](skills/api_reference.skill.md) | 完整 API 端点、参数、SSE 事件规范 |
 | [TROUBLE] 故障排除 | [troubleshooting.skill.md](skills/troubleshooting.skill.md) | SIGKILL、编码、FTP 404 等常见问题解决 |
 
-页面代码修改必须先读取 [page-edit-draft.md](prompts/page-edit-draft.md)，再按任务加载 `references/page-edit-library/` 中对应模块。不要一次加载全部模块，也不要直接复制 `AiPrompts.php` 的整站生成提示词。
+页面代码修改必须先读取 [page-edit-draft.md](prompts/page-edit-draft.md)，再按任务加载 `references/page-edit-library/` 中对应模块。生成草稿后必须加载 `workflows/page-edit-review.md`，只 Review 用户最新要求、当前目标和本次差异，通过后才能进行确定性校验。不要一次加载全部模块，也不要直接复制 `AiPrompts.php` 的整站生成提示词。
 
 页面响应式修改默认只使用两档：无前缀 class 为 `< 768px` 手机端，`md:*` 为 `>= 768px` 电脑端。未指定终端时必须同时保证两端排版和交互正常；指定只改一端时，另一端的最终渲染语义、专属结构和交互必须保持不变。
 
@@ -234,7 +235,7 @@ python config_manager.py
 
 - “发布文章/产品”与“发布网站”是完全不同的操作。存在 `article_id` 时只调用 `nicebox_publish_article`，存在 `product_id` 时只调用 `nicebox_publish_product`；仅把对应草稿改为显示状态，不执行 FTP、不覆盖站点、不检查 FTP 配置或域名。
 - 修改文章/产品排序必须先按真实 ID 精确搜索或按名称模糊搜索并展示六列信息、当前排序、新排序和“排序值越大展示越靠前”。唯一结果时用户确认后立即修改；多条结果时明确说明选择编号后将直接修改，用户选择即视为确认并立即修改，不再二次确认。
-- 当前只支持新增产品、文章，以及查询、搜索、排序、删除、草稿预览和发布；不支持修改已有产品、已有文章或已有 FAQ 的业务内容。用户要求编辑、更新、替换或修正已有记录的名称/标题、正文、摘要、封面/图片、价格、参数、分类、SEO 字段、FAQ 问题或答案时，MCP 和普通 API 都不得尝试写入、创建重复草稿或修改页面 HTML，直接回复：`当前暂不支持修改已有产品、文章或 FAQ 的内容，敬请期待。` 页面模板的产品/文章/FAQ 布局、样式、数量和分页配置不属于业务内容修改，仍可处理；排序、删除、显示/发布也继续使用原流程。
+- 已有文章允许按 [edit_article.skill.md](skills/edit_article.skill.md) 修改；已有产品和已有 FAQ 仍不支持修改业务内容。产品或独立 FAQ 的编辑请求不得创建重复草稿或修改页面 HTML，直接回复：`当前暂不支持修改已有产品或 FAQ 的内容，敬请期待。` 页面模板的产品/文章/FAQ 布局、样式、数量和分页配置不属于业务内容修改，仍可处理；排序、删除、显示/发布也继续使用原流程。
 - 删除文章/产品是不可恢复操作。必须先搜索并展示六列信息及不可恢复警告。唯一结果时用户确认删除后立即执行；多条结果时明确说明选择编号后将直接永久删除，用户选择即视为确认并立即删除，不再二次确认。一次只删除一条。
 - 只有用户明确说“发布网站、发布站点、整站上线、FTP 发布”时才进入 FTP 流程。只说“发布”但当前有内容草稿上下文时，优先发布该内容；没有明确上下文时先询问发布对象。
 - 同一页面存在当前对话创建且尚未保存的预览时，后续页面修改必须以上一预览 `after_html` 为基线并传 `base_preview_token`；新预览自动取代旧预览，只保存最新合并版本。不得要求用户选择保存哪一个版本。用户明确放弃上次修改时才从数据库版本重新开始。

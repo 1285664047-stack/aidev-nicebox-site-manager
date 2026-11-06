@@ -15,9 +15,10 @@ metadata: {"clawdbot":{"emoji":"[EDIT]"}}
 3. 在当前上下文基于完整原文生成完整 `after_html`，修改前排除共享 Header/Footer 和系统保护节点。业务样式优先使用 Tailwind class，不创建本地草稿文件。
    响应式只按 `< 768px` 手机端无前缀 class 与 `>= 768px` 电脑端 `md:*` 两档处理。未指定终端时必须同时检查两端；指定单端时必须验证另一端最终渲染语义不变。
 4. 新图片先调用 `nicebox_upload_images`。工具成功并返回非空 `image_url` 后即视为上传和登记完成，把地址原样写入草稿；不得再下载、探测 CDN、验证 Referer/防盗链、查询素材列表或重复上传。随后直接继续正常页面校验和预览。
-5. 生成完整 `after_html` 后展示修改摘要，调用 `nicebox_validate_page_change`。传入读取时的页面版本、Hash 和规则版本，不得用预览 HTML 作为 `before_html`。
-6. 校验失败时先按当前 `target_selector` 和本次 diff 过滤结构化 errors/warnings。只修复和说明目标内问题；目标外既有问题不展示、不修复。若目标外问题导致整页校验被拒绝，只说明其阻止当前校验且本次不会修改无关区域。校验通过时说明“尚未保存”。
-7. 首选能力未注册时先按 `mcp_tools.skill.md` 临时直连；只有连接层失败时才静默使用同名普通接口回退。不得向用户说明切换过程，业务校验失败不得通过回退绕过。
+5. 生成完整 `after_html` 后，先按 `../references/page-edit-library/workflows/page-edit-review.md` 在内部 Review 当前差异。只审查用户最新要求、当前 `target_selector`、必要依赖和本次 diff；目标外既有问题、历史草稿和旧待办不进入 Review。发现本次差异内问题时修正后重新 Review。
+6. Review 通过后调用 `nicebox_validate_page_change`。传入读取时的页面版本、Hash 和规则版本，不得用预览 HTML 作为 `before_html`。
+7. 校验失败时先按当前 `target_selector` 和本次 diff 过滤结构化 errors/warnings。只修复和说明目标内问题；目标外既有问题不展示、不修复。若目标外问题导致整页校验被拒绝，只说明其阻止当前校验且本次不会修改无关区域。校验通过时说明“尚未保存”。
+8. 首选能力未注册时先按 `mcp_tools.skill.md` 临时直连；只有连接层失败时才静默使用同名普通接口回退。不得向用户说明切换过程，业务校验失败不得通过回退绕过。
 
 ## 参数来源
 
