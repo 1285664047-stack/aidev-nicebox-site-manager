@@ -74,7 +74,7 @@ def init_config():
         "agent_code": "unknown",
         "agent_version": "",
         "distribution_channel": "git",
-        "skill_version": "0.4.7",
+        "skill_version": "0.4.13",
         "site_info": _empty_site_info(),
         "connection": {},
         "created_at": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
