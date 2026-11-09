@@ -23,7 +23,7 @@ metadata: {"clawdbot":{"emoji":"[PRODUCT]","requires":{"file":["scripts/config.j
    - 返回 `COVER_NOT_GENERATED`/HTTP 422 表示本次没有生成合适图片，不要描述成系统崩溃；提示用户选择重试、上传图片或提供可访问 URL。
    - 上传返回 `IMAGE_UPLOAD_FAILED` 时保留已经生成的产品资料，待服务恢复后只重试上传与保存草稿。
 7. 无论用户要求草稿、直接发布还是“发布一个新的产品”，都先调用 `nicebox_create_product_draft`。最初的“发布”指令只表示创建意图，不是正式发布确认。
-8. 取得 `product_id` 后调用 `nicebox_generate_content_preview`，展示包含 `id` 和 `prodId` 的完整预览地址。
+8. 取得 `product_id` 后调用 `nicebox_generate_content_preview`，将包含 `id` 和 `prodId` 的完整地址原值单独输出为 `[打开预览](share_url原值)`；说明和状态另起一行，不得拼进链接目标。
 9. 展示预览地址后必须停下来询问是否正式发布。只有用户在看到本次预览后再次明确确认，才能按该 `product_id` 调用 `nicebox_publish_product`；不得复用最初的发布要求、生成确认或历史确认，不得重新创建产品。
 10. 用户暂不发布时保留草稿。
 11. 预览失败或预览地址尚未展示时只能保留草稿并重试同一 `product_id` 的预览，绝不能调用 `nicebox_publish_product`。

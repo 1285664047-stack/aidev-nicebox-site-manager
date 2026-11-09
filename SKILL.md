@@ -1,7 +1,7 @@
 ---
 name: website-manager
 description: Manage Nicebox AI websites, content drafts and previews, publishing, messages, and SEO/GEO workflows without exposing internal transport details.
-version: 0.4.26
+version: 0.4.27
 metadata: {"clawdbot":{"emoji":"[TOOL]","requires":{"file":["scripts/config.json"]}}}
 ---
 
@@ -75,6 +75,7 @@ metadata: {"clawdbot":{"emoji":"[TOOL]","requires":{"file":["scripts/config.json
 - 文章/产品编号等用于用户查询、选择、排序或删除的业务编号可以展示。只有用户明确要求代码、属性、参数或实现原理时，才展示与当前问题直接相关的技术内容。
 - 长任务只反馈用户可理解的业务阶段、等待时间和进度，不播报内部轮询、读取、重试或回退。
 - 最终回复只给业务结果、实际变化、预览/访问地址、保存/发布状态和必要下一步。普通结果用一句状态和 1 至 3 条变化，不主动增加技术细节。
+- 所有 URL 必须逐字符使用工具返回的 `preview_url`、`share_url`、`domain` 或下载地址，禁止把有效期、括号、页面名、公司名、TITLE、标点或说明拼进 URL。链接单独一行，使用 `[打开预览](原始URL)`、`[打开网站](原始URL)` 或 `[下载文件](原始URL)`；有效期、截止时间和状态在下一行单独说明。不得输出后面紧跟中文括号的裸 URL。
 - 认证失效提示重新连接；暂时不可达提示稍后重试；写入结果未知时先查询同一任务状态。
 
 ## 配置约束
