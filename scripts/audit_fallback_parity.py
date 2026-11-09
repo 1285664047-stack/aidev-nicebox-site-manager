@@ -57,6 +57,10 @@ PRODUCT_EDIT_TOOLS = {
 }
 
 FAQ_EDIT_TOOLS = {
+    "nicebox_list_faq_categories": "getCategories",
+    "nicebox_search_faq_categories": "getCategories",
+    "nicebox_create_faq_category": "createCategory",
+    "nicebox_create_faq": "create",
     "nicebox_list_faqs": "list",
     "nicebox_search_faqs": "list",
     "nicebox_get_faq_detail": "getDetail",
@@ -167,11 +171,13 @@ def main():
         "legacy_skill": joined_text([
             ROOT / "nicebox-site-manager-main" / "SKILL.md",
             ROOT / "nicebox-site-manager-main" / "skills" / "edit_faq.skill.md",
+            ROOT / "nicebox-site-manager-main" / "skills" / "create_faq.skill.md",
             ROOT / "nicebox-site-manager-main" / "skills" / "mcp_tools.skill.md",
         ]),
         "workbuddy_skill": joined_text([
             ROOT / "workbuddy-connector" / "skills" / "nicebox-site-manager" / "SKILL.md",
             ROOT / "workbuddy-connector" / "skills" / "nicebox-site-manager" / "references" / "FAQ修改流程.md",
+            ROOT / "workbuddy-connector" / "skills" / "nicebox-site-manager" / "references" / "内容管理流程.md",
         ]),
     }
     for tool, controller_method in FAQ_EDIT_TOOLS.items():
@@ -180,8 +186,8 @@ def main():
             "fallback_manifest": tool in manifest,
             "ordinary_api_script": ('"%s"' % tool) in api_tool_source,
             "ordinary_api_controller": ("function %s(" % controller_method) in faq_controller_source,
-            "legacy_skill": "edit_faq.skill.md" in faq_skill_sources["legacy_skill"],
-            "workbuddy_skill": "FAQ修改流程" in faq_skill_sources["workbuddy_skill"],
+            "legacy_skill": "create_faq.skill.md" in faq_skill_sources["legacy_skill"] or "edit_faq.skill.md" in faq_skill_sources["legacy_skill"],
+            "workbuddy_skill": "独立 FAQ" in faq_skill_sources["workbuddy_skill"] or "FAQ修改流程" in faq_skill_sources["workbuddy_skill"],
         }
         absent = [name for name, present in checks.items() if not present]
         if absent:
