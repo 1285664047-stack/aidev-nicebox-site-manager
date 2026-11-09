@@ -53,6 +53,9 @@ Authorization: Bearer YOUR_API_KEY
 | POST | `/product/publishSaved` | Publish a saved product by product_id |
 | GET | `/product/getCategories` | List product categories |
 | POST | `/product/createCategory` | Create a product category |
+| GET | `/faq/getCategories` | List or search standalone FAQ management categories |
+| POST | `/faq/createCategory` | Create a standalone FAQ management category |
+| POST | `/faq/create` | Create a standalone FAQ record after confirmation |
 | POST | `/ai_tools/generateContentCover` | Generate article/product cover or Logo candidate with `aspect_ratio` |
 | GET | `/site_pages/getLanguageList` | List site languages |
 | GET | `/site_pages/readIndexHtml` | Read index HTML |

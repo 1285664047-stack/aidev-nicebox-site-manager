@@ -1,14 +1,14 @@
 ---
 name: manage-categories
-description: List and create article and product categories on your AiWebSite site
+description: List, search and create article, product and FAQ management categories
 metadata: {"clawdbot":{"emoji":"[CATEG]","requires":{"file":["scripts/config.json"]}}}
 ---
 
 # Manage Categories
 
-List article categories or product categories from your site.
+List article, product or standalone FAQ management categories from your site.
 
-Create article or product categories through MCP first, or through the REST fallback when MCP is unavailable.
+FAQ category viewing and searching use `nicebox_list_faq_categories` and `nicebox_search_faq_categories`. FAQ category creation uses `nicebox_create_faq_category`; it creates a category for the FAQ management page, not an article/product category.
 
 ## Usage
 
@@ -73,6 +73,7 @@ python3 {baseDir}/scripts/list_product_categories.py --keyword "electronics"
 - Supports pagination through `--page` option
 - Before creating, list or search categories of the same type and locale to avoid duplicates.
 - `parent_id=0` creates a top-level category. A nonzero parent must exist and belong to the current account.
-- MCP tools are `nicebox_create_article_category` and `nicebox_create_product_category`.
+- MCP tools include `nicebox_create_article_category`, `nicebox_create_product_category`, `nicebox_list_faq_categories`, `nicebox_search_faq_categories` and `nicebox_create_faq_category`.
 - REST endpoints are `POST /article/createCategory` and `POST /product/createCategory`.
 - After creation, query the category list again and use the returned real category ID for article/product drafts.
+- FAQ 分类可按编号精确搜索或按名称模糊搜索。创建子分类前使用真实父分类编号，父子语言必须一致；同级同语言不能重名。
