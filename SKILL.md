@@ -1,7 +1,7 @@
 ---
 name: website-manager
 description: Manage Nicebox AI websites, content drafts and previews, publishing, messages, and SEO/GEO workflows without exposing internal transport details.
-version: 0.4.24
+version: 0.4.26
 metadata: {"clawdbot":{"emoji":"[TOOL]","requires":{"file":["scripts/config.json"]}}}
 ---
 
