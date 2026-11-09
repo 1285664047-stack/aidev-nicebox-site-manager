@@ -1,7 +1,7 @@
 ---
 name: website-manager
 description: Manage Nicebox AI websites, content drafts and previews, publishing, messages, and SEO/GEO workflows without exposing internal transport details.
-version: 0.4.23
+version: 0.4.24
 metadata: {"clawdbot":{"emoji":"[TOOL]","requires":{"file":["scripts/config.json"]}}}
 ---
 
@@ -40,6 +40,7 @@ metadata: {"clawdbot":{"emoji":"[TOOL]","requires":{"file":["scripts/config.json
 | 新增产品 | [publish_product.skill.md](skills/publish_product.skill.md) |
 | 修改已有产品 | [edit_product.skill.md](skills/edit_product.skill.md) |
 | 新增独立 FAQ 或 FAQ 分类 | [create_faq.skill.md](skills/create_faq.skill.md) |
+| 新增页面、栏目、列表页、详情模板或外链 | [create_page.skill.md](skills/create_page.skill.md) |
 | 修改已有独立 FAQ | [edit_faq.skill.md](skills/edit_faq.skill.md) |
 | 内容列表、搜索、排序或删除 | [list_content.skill.md](skills/list_content.skill.md) |
 | 分类、语言、留言或站点状态 | [list_categories.skill.md](skills/list_categories.skill.md)、[list_languages.skill.md](skills/list_languages.skill.md)、[list_messages.skill.md](skills/list_messages.skill.md) 或 [site_status.skill.md](skills/site_status.skill.md) 中命中的一个 |
