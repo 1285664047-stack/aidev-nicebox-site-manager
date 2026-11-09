@@ -17,6 +17,12 @@ PAGE_DIAGNOSTIC_SERVICE = ROOT / "api" / "app" / "openclaw" / "service" / "PageC
 MCP_INSTRUCTIONS_FILE = ROOT / "mcp-server" / "src" / "instructions.ts"
 
 PAGE_TOOLS = {
+    "nicebox_analyze_page_creation": "analyzePageCreation",
+    "nicebox_create_page_draft": "createPageDraft",
+    "nicebox_get_page_creation_draft": "getPageCreationDraft",
+    "nicebox_abandon_page_creation_draft": "abandonPageCreationDraft",
+    "nicebox_commit_page_creation": "commitPageCreation",
+    "nicebox_get_page_creation_operation": "getPageCreationOperation",
     "nicebox_list_pages": "listPages",
     "nicebox_get_page_metadata": "getPageMetadata",
     "nicebox_get_page_sections": "getPageSections",
@@ -68,6 +74,7 @@ FAQ_EDIT_TOOLS = {
 }
 
 LEGACY_PAGE_FLOW_FILES = [
+    ROOT / "nicebox-site-manager-main" / "skills" / "create_page.skill.md",
     ROOT / "nicebox-site-manager-main" / "skills" / "page_code_read.skill.md",
     ROOT / "nicebox-site-manager-main" / "skills" / "page_code_validate.skill.md",
     ROOT / "nicebox-site-manager-main" / "skills" / "page_change_workflow.skill.md",
@@ -75,6 +82,7 @@ LEGACY_PAGE_FLOW_FILES = [
 ]
 
 WORKBUDDY_PAGE_FLOW_FILES = [
+    ROOT / "workbuddy-connector" / "skills" / "nicebox-site-manager" / "references" / "新增页面流程.md",
     ROOT / "workbuddy-connector" / "skills" / "nicebox-site-manager" / "references" / "页面代码读取流程.md",
     ROOT / "workbuddy-connector" / "skills" / "nicebox-site-manager" / "references" / "页面修改草稿与校验流程.md",
     ROOT / "workbuddy-connector" / "skills" / "nicebox-site-manager" / "references" / "页面预览保存与回退流程.md",
