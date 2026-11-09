@@ -43,7 +43,7 @@ metadata: {"clawdbot":{"emoji":"[MCP]"}}
 
 ## 能力映射
 
-完整的 77 项机器可检查映射位于 `scripts/fallback_manifest.json`；发布前运行
+完整的机器可检查映射位于 `scripts/fallback_manifest.json`；发布前运行
 `python scripts/audit_fallback_parity.py`，任何新增 MCP 工具没有普通 API 回退时检查都会失败。
 
 | 能力组 | MCP 工具 | 普通 API 回退 |
@@ -56,6 +56,8 @@ metadata: {"clawdbot":{"emoji":"[MCP]"}}
 | 文章/产品分类查询和创建 | 4 个 category 工具 | `api_tool.py TOOL --args-json JSON` |
 | 文章/产品列表和搜索 | 4 个 list/search 工具 | `list_content.py article|product`，搜索增加 `--id` 或 `--keyword` |
 | 文章详情、修改、文件名检查、SEO/FAQ重生成和Schema同步 | 6 个文章修改工具 | `api_tool.py TOOL --args-json JSON` |
+| 产品详情、修改、文件名检查、SEO/FAQ重生成和Schema同步 | 6 个产品修改工具 | `api_tool.py TOOL --args-json JSON` |
+| 独立 FAQ 列表、搜索、详情和修改 | `nicebox_list_faqs`、`nicebox_search_faqs`、`nicebox_get_faq_detail`、`nicebox_update_faq` | `api_tool.py TOOL --args-json JSON` |
 | 文章/产品排序和永久删除 | 4 个 update/delete 工具 | `update_content_sort.py`、`delete_content.py`；必须携带快照和 `--confirmed` |
 | 文章/产品正文生成 | `nicebox_generate_article_content`、`nicebox_generate_product_content` | `api_tool.py TOOL --args-json JSON` |
 | 封面、Logo 和云资源库 | `nicebox_generate_content_cover`、`nicebox_generate_logo`、`nicebox_upload_images` | `api_tool.py nicebox_generate_content_cover`、`generate_logo.py`、`upload_image.py` |

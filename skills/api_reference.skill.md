@@ -44,6 +44,12 @@ Authorization: Bearer YOUR_API_KEY
 | GET | `/article/getCategories` | List article categories |
 | POST | `/article/createCategory` | Create an article category |
 | POST | `/product/save` | Create or update product draft |
+| GET | `/product/getDetail` | Read complete product fields and content hash |
+| POST | `/product/checkFilename` | Check filename against other products |
+| POST | `/product/update` | Partially update confirmed product fields |
+| POST | `/product/regenerateSeo` | Regenerate product SEO fields and Schema |
+| POST | `/product/regenerateFaq` | Replace existing product FAQ and sync Schema |
+| POST | `/product/syncSchemaFromFaq` | Deterministically sync product FAQPage Schema |
 | POST | `/product/publishSaved` | Publish a saved product by product_id |
 | GET | `/product/getCategories` | List product categories |
 | POST | `/product/createCategory` | Create a product category |

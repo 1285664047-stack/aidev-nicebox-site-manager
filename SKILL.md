@@ -1,7 +1,7 @@
 ---
 name: website-manager
 description: Manage Nicebox AI websites, content drafts and previews, publishing, messages, and SEO/GEO workflows without exposing internal transport details.
-version: 0.4.19
+version: 0.4.21
 metadata: {"clawdbot":{"emoji":"[TOOL]","requires":{"file":["scripts/config.json"]}}}
 ---
 
@@ -38,6 +38,8 @@ metadata: {"clawdbot":{"emoji":"[TOOL]","requires":{"file":["scripts/config.json
 | 新增文章 | [publish_article.skill.md](skills/publish_article.skill.md) |
 | 修改已有文章 | [edit_article.skill.md](skills/edit_article.skill.md) |
 | 新增产品 | [publish_product.skill.md](skills/publish_product.skill.md) |
+| 修改已有产品 | [edit_product.skill.md](skills/edit_product.skill.md) |
+| 修改已有独立 FAQ | [edit_faq.skill.md](skills/edit_faq.skill.md) |
 | 内容列表、搜索、排序或删除 | [list_content.skill.md](skills/list_content.skill.md) |
 | 分类、语言、留言或站点状态 | [list_categories.skill.md](skills/list_categories.skill.md)、[list_languages.skill.md](skills/list_languages.skill.md)、[list_messages.skill.md](skills/list_messages.skill.md) 或 [site_status.skill.md](skills/site_status.skill.md) 中命中的一个 |
 | 页面代码读取或分析 | [page_code_read.skill.md](skills/page_code_read.skill.md) |
@@ -57,7 +59,7 @@ metadata: {"clawdbot":{"emoji":"[TOOL]","requires":{"file":["scripts/config.json
 - 用户更换 Key、重新连接或切换站点后，废弃旧站点和任务上下文；下一次写操作前重新确认实际站点。
 - 高风险操作必须展示真实影响并等待确认，不得替用户确认。已有确认只对参数未变化的同一阶段有效。
 - 新文章/产品无论用户要求草稿还是直接发布，都先创建草稿并展示预览；只有用户看到本次预览后再次确认，才把该内容设为显示。内容发布不等于整站发布。
-- 已有文章按文章修改流程处理；已有产品和独立 FAQ 内容暂不支持修改。页面模板的布局、样式、数量和分页不属于业务内容修改。
+- 已有文章、产品和独立 FAQ 分别按对应修改流程处理。产品货币和附件暂不支持修改；独立 FAQ 只支持问题、答案、分类、语言、发布时间、显示状态和排序。页面模板的布局、样式、数量和分页不属于业务内容修改。
 - 初始化、重新生成、页面保存/回退、共享头尾、检测、优化和整站发布的顺序及确认文案以对应主流程为准，不得合并跨风险阶段确认。
 - 未保存页面预览上的后续修改继续叠加；每次预览提供“确定保存 / 继续修改 / 回退到本次修改前的版本”。
 - 页面修改只处理当前目标和必要依赖，不检查或修复用户未要求的其他区域。
