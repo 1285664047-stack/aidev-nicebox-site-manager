@@ -43,7 +43,8 @@ metadata: {"clawdbot":{"emoji":"[TOOL]","requires":{"file":["scripts/config.json
 | 新增页面、栏目、列表页、详情模板或外链 | [create_page.skill.md](skills/create_page.skill.md) |
 | 修改已有独立 FAQ | [edit_faq.skill.md](skills/edit_faq.skill.md) |
 | 内容列表、搜索、排序或删除 | [list_content.skill.md](skills/list_content.skill.md) |
-| 分类、语言、留言或站点状态 | [list_categories.skill.md](skills/list_categories.skill.md)、[list_languages.skill.md](skills/list_languages.skill.md)、[list_messages.skill.md](skills/list_messages.skill.md) 或 [site_status.skill.md](skills/site_status.skill.md) 中命中的一个 |
+| 分类查询、创建、修改或删除 | [list_categories.skill.md](skills/list_categories.skill.md) |
+| 语言、留言或站点状态 | [list_languages.skill.md](skills/list_languages.skill.md)、[list_messages.skill.md](skills/list_messages.skill.md) 或 [site_status.skill.md](skills/site_status.skill.md) 中命中的一个 |
 | 页面代码读取或分析 | [page_code_read.skill.md](skills/page_code_read.skill.md) |
 | 页面代码修改和校验 | [page_code_validate.skill.md](skills/page_code_validate.skill.md) |
 | 页面预览、连续修改、保存或回退 | [page_change_workflow.skill.md](skills/page_change_workflow.skill.md) |
