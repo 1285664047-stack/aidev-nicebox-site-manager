@@ -55,7 +55,8 @@ metadata: {"clawdbot":{"emoji":"[MCP]"}}
 | 新增页面分析、草稿、预览和确认创建 | `nicebox_analyze_page_creation`、`nicebox_create_page_draft`、`nicebox_get_page_creation_draft`、`nicebox_abandon_page_creation_draft`、`nicebox_commit_page_creation`、`nicebox_get_page_creation_operation` | `api_tool.py TOOL --args-json JSON` |
 | SEO/GEO 报告、检测、报告优化、无报告优化、状态 | 9 个 `nicebox_*seo_geo*` / `nicebox_*direct_optimization*` 工具 | `seo_geo.py latest/report/optimizable/direct-plan/start-detect/detect-status/start-optimize/start-direct-optimize/optimize-status` |
 | 文章/产品分类查询和创建 | 4 个 category 工具 | `api_tool.py TOOL --args-json JSON` |
-| FAQ 分类查看、搜索、创建与独立 FAQ 新增 | `nicebox_list_faq_categories`、`nicebox_search_faq_categories`、`nicebox_create_faq_category`、`nicebox_create_faq` | `api_tool.py TOOL --args-json JSON` |
+| FAQ 分类查看、搜索、创建与独立 FAQ 新增/删除 | `nicebox_list_faq_categories`、`nicebox_search_faq_categories`、`nicebox_create_faq_category`、`nicebox_create_faq`、`nicebox_delete_faq` | `api_tool.py TOOL --args-json JSON` |
+| FAQ/产品/文章分类影响、修改和删除 | 9 个分类影响/修改/删除工具 | `api_tool.py TOOL --args-json JSON` |
 | 文章/产品列表和搜索 | 4 个 list/search 工具 | `list_content.py article|product`，搜索增加 `--id` 或 `--keyword` |
 | 文章详情、修改、文件名检查、SEO/FAQ重生成和Schema同步 | 6 个文章修改工具 | `api_tool.py TOOL --args-json JSON` |
 | 产品详情、修改、文件名检查、SEO/FAQ重生成和Schema同步 | 6 个产品修改工具 | `api_tool.py TOOL --args-json JSON` |
