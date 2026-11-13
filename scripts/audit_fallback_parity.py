@@ -44,6 +44,19 @@ PAGE_TOOLS = {
     "nicebox_commit_page_backup": "commitPageBackup",
 }
 
+PAGE_MANAGEMENT_TOOLS = {
+    "nicebox_get_page_management_detail": "getPageManagementDetail",
+    "nicebox_update_page_sort": "updatePageSort",
+    "nicebox_copy_pages": "copyPages",
+    "nicebox_check_page_deletion": "checkPageDeletion",
+    "nicebox_delete_pages": "deletePages",
+    "nicebox_update_page_status": "updatePageStatus",
+    "nicebox_check_page_locale_change": "checkPageLocaleChange",
+    "nicebox_update_page_locale": "updatePageLocale",
+    "nicebox_update_page_filename": "updatePageFilename",
+    "nicebox_update_page_settings": "updatePageSettings",
+}
+
 ARTICLE_EDIT_TOOLS = {
     "nicebox_get_article_detail": "getDetail",
     "nicebox_check_article_filename": "checkFilename",
@@ -84,6 +97,21 @@ CATEGORY_MANAGEMENT_TOOLS = {
     "nicebox_get_article_category_impact": "getCategoryImpact",
     "nicebox_update_article_category": "updateCategory",
     "nicebox_delete_article_category": "deleteCategory",
+}
+
+KNOWLEDGE_TOOLS = {
+    "nicebox_get_knowledge_profile": "getProfile",
+    "nicebox_update_knowledge_profile": "updateProfile",
+}
+
+REMOVED_QUALIFICATION_TOOLS = {
+    "nicebox_list_qualifications": "listQualifications",
+    "nicebox_create_qualification": "createQualification",
+    "nicebox_update_qualification": "updateQualification",
+    "nicebox_get_qualification_delete_impact": "getQualificationDeleteImpact",
+    "nicebox_delete_qualification": "deleteQualification",
+    "nicebox_extract_qualifications": "extractQualifications",
+    "nicebox_import_qualifications": "importQualifications",
 }
 
 LEGACY_PAGE_FLOW_FILES = [
@@ -133,6 +161,52 @@ def main():
         absent = [name for name, present in checks.items() if not present]
         if absent:
             page_contract_errors.append({"tool": tool, "missing": absent})
+    page_management_sources = {
+        "legacy_skill": joined_text([
+            ROOT / "nicebox-site-manager-main" / "SKILL.md",
+            ROOT / "nicebox-site-manager-main" / "skills" / "manage_pages.skill.md",
+            ROOT / "nicebox-site-manager-main" / "skills" / "mcp_tools.skill.md",
+        ]),
+        "workbuddy_skill": joined_text([
+            ROOT / "workbuddy-connector" / "skills" / "nicebox-site-manager" / "SKILL.md",
+            ROOT / "workbuddy-connector" / "skills" / "nicebox-site-manager" / "references" / "页面管理流程.md",
+        ]),
+    }
+    for tool, controller_method in PAGE_MANAGEMENT_TOOLS.items():
+        checks = {
+            "mcp": tool in tools,
+            "fallback_manifest": tool in manifest,
+            "ordinary_api_script": ('"%s"' % tool) in api_tool_source,
+            "ordinary_api_controller": ("function %s(" % controller_method) in controller_source,
+            "legacy_skill": tool in page_management_sources["legacy_skill"],
+            "workbuddy_skill": tool in page_management_sources["workbuddy_skill"],
+        }
+        absent = [name for name, present in checks.items() if not present]
+        if absent:
+            page_contract_errors.append({"tool": tool, "missing": absent})
+    ordered_tool_positions = sorted((max(source.find('"%s"' % tool), source.find("'%s'" % tool)), tool) for tool in PAGE_MANAGEMENT_TOOLS)
+    if ordered_tool_positions and ordered_tool_positions[0][0] < 0:
+        page_contract_errors.append({"tool": "page_management", "missing": ["tool registration source"]})
+    else:
+        for index, (position, tool) in enumerate(ordered_tool_positions):
+            end = ordered_tool_positions[index + 1][0] if index + 1 < len(ordered_tool_positions) else source.find("nicebox_get_page_metadata", position)
+            snippet = source[position:end if end > position else position + 2000]
+            should_confirm = tool in {"nicebox_delete_pages", "nicebox_update_page_locale"}
+            has_confirmed_schema = re.search(r"\bconfirmed\b", snippet) is not None
+            if should_confirm != has_confirmed_schema:
+                page_contract_errors.append({
+                    "tool": tool,
+                    "missing": ["confirmed schema" if should_confirm else "unexpected confirmed schema"],
+                })
+            should_be_idempotent = tool in {"nicebox_copy_pages", "nicebox_delete_pages", "nicebox_update_page_locale"}
+            has_operation_id = re.search(r"\boperation_id\s*:", snippet) is not None
+            if should_be_idempotent != has_operation_id:
+                page_contract_errors.append({
+                    "tool": tool,
+                    "missing": ["operation_id schema" if should_be_idempotent else "unexpected operation_id schema"],
+                })
+            if tool == "nicebox_update_page_sort" and "expected_scope_hash" not in snippet:
+                page_contract_errors.append({"tool": tool, "missing": ["expected_scope_hash schema"]})
 
     article_contract_errors = []
     article_controller_source = (ROOT / "api" / "app" / "openclaw" / "controller" / "Article.php").read_text(encoding="utf-8")
@@ -237,6 +311,56 @@ def main():
         if absent:
             category_contract_errors.append({"tool": tool, "missing": absent})
 
+    knowledge_contract_errors = []
+    knowledge_controller_source = (ROOT / "api" / "app" / "openclaw" / "controller" / "Knowledge.php").read_text(encoding="utf-8")
+    knowledge_skill_sources = joined_text([
+        ROOT / "nicebox-site-manager-main" / "SKILL.md",
+        ROOT / "nicebox-site-manager-main" / "skills" / "knowledge_base.skill.md",
+        ROOT / "nicebox-site-manager-main" / "skills" / "mcp_tools.skill.md",
+        ROOT / "workbuddy-connector" / "skills" / "nicebox-site-manager" / "SKILL.md",
+        ROOT / "workbuddy-connector" / "skills" / "nicebox-site-manager" / "references" / "AI知识库管理流程.md",
+    ])
+    for tool, controller_method in KNOWLEDGE_TOOLS.items():
+        checks = {
+            "mcp": tool in tools,
+            "fallback_manifest": tool in manifest,
+            "ordinary_api_script": ('"%s"' % tool) in api_tool_source,
+            "ordinary_api_controller": ("function %s(" % controller_method) in knowledge_controller_source,
+            "skills": tool in knowledge_skill_sources,
+        }
+        absent = [name for name, present in checks.items() if not present]
+        if absent:
+            knowledge_contract_errors.append({"tool": tool, "missing": absent})
+    profile_aliases = ["公司资料", "公司基本资料", "企业资料", "企业基本资料", "网站基本资料"]
+    for alias in profile_aliases:
+        if alias not in knowledge_skill_sources:
+            knowledge_contract_errors.append({"profile_alias_missing_from_skills": alias})
+        if alias not in source:
+            knowledge_contract_errors.append({"profile_alias_missing_from_mcp": alias})
+
+    qualification_boundary_errors = []
+    for tool, controller_method in REMOVED_QUALIFICATION_TOOLS.items():
+        leaks = []
+        if tool in tools: leaks.append("mcp")
+        if tool in manifest: leaks.append("fallback_manifest")
+        if ('"%s"' % tool) in api_tool_source: leaks.append("ordinary_api_script")
+        if ("function %s(" % controller_method) in knowledge_controller_source: leaks.append("openclaw_controller")
+        if tool in knowledge_skill_sources: leaks.append("skills")
+        if leaks:
+            qualification_boundary_errors.append({"tool": tool, "unexpected": leaks})
+
+    admin_qualification_controller = ROOT / "api" / "app" / "admin" / "controller" / "SiteQualifications.php"
+    admin_qualification_model = ROOT / "api" / "app" / "common" / "model" / "SiteQualification.php"
+    admin_qualification_extract = ROOT / "api" / "app" / "common" / "service" / "SiteQualificationExtractService.php"
+    admin_qualification_sync = ROOT / "api" / "app" / "common" / "service" / "SiteQualificationMaterialSyncService.php"
+    admin_source = admin_qualification_controller.read_text(encoding="utf-8") if admin_qualification_controller.is_file() else ""
+    for required_file in [admin_qualification_controller, admin_qualification_model, admin_qualification_extract, admin_qualification_sync]:
+        if not required_file.is_file():
+            qualification_boundary_errors.append({"backend_missing": str(required_file)})
+    for method in ["index", "save", "updateName", "delete", "extract", "import"]:
+        if ("function %s(" % method) not in admin_source:
+            qualification_boundary_errors.append({"backend_method_missing": method})
+
     prompt_library_errors = []
     canonical_prompt_dir = ROOT / "doc" / "workbuddy" / "页面修改能力" / "page-edit-prompts"
     prompt_manifest_file = canonical_prompt_dir / "manifest.json"
@@ -281,10 +405,10 @@ def main():
             if token not in source_text:
                 prompt_library_errors.append("missing detail contract: %s" % label)
 
-    if missing or stale or missing_scripts or page_contract_errors or article_contract_errors or product_contract_errors or faq_contract_errors or category_contract_errors or prompt_library_errors:
-        print(json.dumps({"ok": False, "mcp_tool_count": len(tools), "fallback_count": len(manifest), "missing": missing, "stale": stale, "missing_scripts": missing_scripts, "page_contract_errors": page_contract_errors, "article_contract_errors": article_contract_errors, "product_contract_errors": product_contract_errors, "faq_contract_errors": faq_contract_errors, "category_contract_errors": category_contract_errors, "prompt_library_errors": prompt_library_errors}, ensure_ascii=False, indent=2))
+    if missing or stale or missing_scripts or page_contract_errors or article_contract_errors or product_contract_errors or faq_contract_errors or category_contract_errors or knowledge_contract_errors or qualification_boundary_errors or prompt_library_errors:
+        print(json.dumps({"ok": False, "mcp_tool_count": len(tools), "fallback_count": len(manifest), "missing": missing, "stale": stale, "missing_scripts": missing_scripts, "page_contract_errors": page_contract_errors, "article_contract_errors": article_contract_errors, "product_contract_errors": product_contract_errors, "faq_contract_errors": faq_contract_errors, "category_contract_errors": category_contract_errors, "knowledge_contract_errors": knowledge_contract_errors, "qualification_boundary_errors": qualification_boundary_errors, "prompt_library_errors": prompt_library_errors}, ensure_ascii=False, indent=2))
         return 1
-    print(json.dumps({"ok": True, "mcp_tool_count": len(tools), "fallback_count": len(manifest), "page_tool_count": len(PAGE_TOOLS), "article_edit_tool_count": len(ARTICLE_EDIT_TOOLS), "product_edit_tool_count": len(PRODUCT_EDIT_TOOLS), "faq_edit_tool_count": len(FAQ_EDIT_TOOLS), "category_management_tool_count": len(CATEGORY_MANAGEMENT_TOOLS) + 3, "prompt_library_version": prompt_manifest["library_version"], "message": "所有 MCP 工具均已登记普通 API 回退，FAQ删除和三类分类管理能力已同步到普通 API 和两个 Skill"}, ensure_ascii=False, indent=2))
+    print(json.dumps({"ok": True, "mcp_tool_count": len(tools), "fallback_count": len(manifest), "page_tool_count": len(PAGE_TOOLS), "page_management_tool_count": len(PAGE_MANAGEMENT_TOOLS), "article_edit_tool_count": len(ARTICLE_EDIT_TOOLS), "product_edit_tool_count": len(PRODUCT_EDIT_TOOLS), "faq_edit_tool_count": len(FAQ_EDIT_TOOLS), "category_management_tool_count": len(CATEGORY_MANAGEMENT_TOOLS) + 3, "knowledge_tool_count": len(KNOWLEDGE_TOOLS), "prompt_library_version": prompt_manifest["library_version"], "message": "所有 MCP 工具均已登记普通 API 回退，页面管理能力已同步到普通 API 和两个 Skill"}, ensure_ascii=False, indent=2))
     return 0
 
 if __name__ == "__main__": sys.exit(main())
