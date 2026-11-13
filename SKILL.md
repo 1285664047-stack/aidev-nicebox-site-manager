@@ -45,7 +45,7 @@ metadata: {"clawdbot":{"emoji":"[TOOL]","requires":{"file":["scripts/config.json
 | 修改已有独立 FAQ | [edit_faq.skill.md](skills/edit_faq.skill.md) |
 | 内容列表、搜索、排序或删除 | [list_content.skill.md](skills/list_content.skill.md) |
 | 分类查询、创建、修改或删除 | [list_categories.skill.md](skills/list_categories.skill.md) |
-| 语言、留言或站点状态 | [list_languages.skill.md](skills/list_languages.skill.md)、[list_messages.skill.md](skills/list_messages.skill.md) 或 [site_status.skill.md](skills/site_status.skill.md) 中命中的一个 |
+| 多语言查询、自定义名称、排序、整站语言搬迁、设置默认入口或删除语言；留言或站点状态 | [list_languages.skill.md](skills/list_languages.skill.md)、[list_messages.skill.md](skills/list_messages.skill.md) 或 [site_status.skill.md](skills/site_status.skill.md) 中命中的一个 |
 | 页面代码读取或分析 | [page_code_read.skill.md](skills/page_code_read.skill.md) |
 | 页面代码修改和校验 | [page_code_validate.skill.md](skills/page_code_validate.skill.md) |
 | 页面预览、连续修改、保存或回退 | [page_change_workflow.skill.md](skills/page_change_workflow.skill.md) |
