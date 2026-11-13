@@ -50,7 +50,7 @@ metadata: {"clawdbot":{"emoji":"[MCP]"}}
 | --- | --- | --- |
 | 版本、站点状态、来源、语言、首页验证 | `nicebox_get_release_info`、`nicebox_get_site_status`、`nicebox_get_site_source`、`nicebox_list_languages`、`nicebox_verify_homepage` | `api_tool.py TOOL` |
 | 页面代码只读能力 | `nicebox_list_pages`、`nicebox_get_page_metadata`、`nicebox_get_page_sections`、`nicebox_get_page_code`、`nicebox_get_page_width_settings`、`nicebox_diagnose_page_components` | `api_tool.py TOOL --args-json JSON` |
-| 页面管理 | `nicebox_get_page_management_detail`、页面排序/复制/删除影响与删除/显示隐藏/语言影响与变更/文件名/页面设置等 10 个管理工具 | `api_tool.py TOOL --args-json JSON`；只有删除和更改语言要求确认 |
+| 页面管理 | `nicebox_get_page_management_detail`、页面排序/设置上级页面/复制/删除影响与删除/显示隐藏/语言影响与变更/文件名/AI生成TDK/页面设置等 12 个管理工具 | `api_tool.py TOOL --args-json JSON`；删除和更改语言要求风险确认，AI生成TDK需确认生成结果后保存 |
 | 页面草稿校验 | `nicebox_validate_page_change`、`nicebox_preview_page_width_settings` | `api_tool.py TOOL --args-json JSON` |
 | 页面预览、保存与回退 | `nicebox_create_page_preview`、`nicebox_create_page_width_preview`、`nicebox_get_page_preview`、`nicebox_abandon_page_preview`、`nicebox_commit_page_change`、`nicebox_commit_page_width_settings`、`nicebox_get_page_change_operation`、`nicebox_list_page_backups`、`nicebox_preview_page_backup`、`nicebox_commit_page_backup` | `api_tool.py TOOL --args-json JSON` |
 | 新增页面分析、草稿、预览和确认创建 | `nicebox_analyze_page_creation`、`nicebox_create_page_draft`、`nicebox_get_page_creation_draft`、`nicebox_abandon_page_creation_draft`、`nicebox_commit_page_creation`、`nicebox_get_page_creation_operation` | `api_tool.py TOOL --args-json JSON` |

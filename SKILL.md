@@ -41,7 +41,7 @@ metadata: {"clawdbot":{"emoji":"[TOOL]","requires":{"file":["scripts/config.json
 | 修改已有产品 | [edit_product.skill.md](skills/edit_product.skill.md) |
 | 新增独立 FAQ 或 FAQ 分类 | [create_faq.skill.md](skills/create_faq.skill.md) |
 | 新增页面、栏目、列表页、详情模板或链接页面（站外/站内锚点） | [create_page.skill.md](skills/create_page.skill.md) |
-| 页面列表、筛选、排序、复制、删除、显示隐藏、语言归属、文件名、页面名称或TDK | [manage_pages.skill.md](skills/manage_pages.skill.md) |
+| 页面列表、筛选、排序、设置上级页面、调整页面层级、复制、删除、显示隐藏、语言归属、文件名、页面名称、TDK或AI一键生成页面标题/关键词/描述 | [manage_pages.skill.md](skills/manage_pages.skill.md) |
 | 修改已有独立 FAQ | [edit_faq.skill.md](skills/edit_faq.skill.md) |
 | 内容列表、搜索、排序或删除 | [list_content.skill.md](skills/list_content.skill.md) |
 | 分类查询、创建、修改或删除 | [list_categories.skill.md](skills/list_categories.skill.md) |
