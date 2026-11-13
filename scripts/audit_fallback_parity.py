@@ -236,6 +236,20 @@ def main():
     if missing_page_seo_contracts:
         page_contract_errors.append({"tool": "nicebox_generate_page_seo", "missing": missing_page_seo_contracts})
 
+    locale_body = page_management_service_source.split("public function localeImpact", 1)[-1].split("public function updateLocale", 1)[0]
+    update_locale_body = page_management_service_source.split("public function updateLocale", 1)[-1].split("public function updateFilename", 1)[0]
+    page_locale_contracts = {
+        "supported_locale_validation": "LocaleConfig::isValidLocale" in locale_body,
+        "no_existing_locale_requirement": "PAGE_LOCALE_NOT_ENABLED" not in page_management_service_source
+            and "目标语言尚未在当前站点启用" not in page_management_service_source,
+        "site_language_sync": "SiteLangService::SCENE_ADD_NEW" in update_locale_body and "syncSiteLangs(" in update_locale_body,
+        "legacy_skill_allows_new_locale": "无需预先存在于当前站点" in page_management_sources["legacy_skill"],
+        "workbuddy_skill_allows_new_locale": "不要求当前站点已经存在该语言" in page_management_sources["workbuddy_skill"],
+    }
+    missing_page_locale_contracts = [name for name, present in page_locale_contracts.items() if not present]
+    if missing_page_locale_contracts:
+        page_contract_errors.append({"tool": "nicebox_update_page_locale", "missing": missing_page_locale_contracts})
+
     article_contract_errors = []
     article_controller_source = (ROOT / "api" / "app" / "openclaw" / "controller" / "Article.php").read_text(encoding="utf-8")
     article_skill_sources = {
