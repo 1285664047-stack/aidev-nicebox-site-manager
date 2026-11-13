@@ -47,6 +47,7 @@ PAGE_TOOLS = {
 PAGE_MANAGEMENT_TOOLS = {
     "nicebox_get_page_management_detail": "getPageManagementDetail",
     "nicebox_update_page_sort": "updatePageSort",
+    "nicebox_update_page_parent": "updatePageParent",
     "nicebox_copy_pages": "copyPages",
     "nicebox_check_page_deletion": "checkPageDeletion",
     "nicebox_delete_pages": "deletePages",
@@ -54,6 +55,7 @@ PAGE_MANAGEMENT_TOOLS = {
     "nicebox_check_page_locale_change": "checkPageLocaleChange",
     "nicebox_update_page_locale": "updatePageLocale",
     "nicebox_update_page_filename": "updatePageFilename",
+    "nicebox_generate_page_seo": "generatePageSeo",
     "nicebox_update_page_settings": "updatePageSettings",
 }
 
@@ -218,6 +220,21 @@ def main():
     missing_page_settings_contracts = [name for name, present in page_settings_contracts.items() if not present]
     if missing_page_settings_contracts:
         page_contract_errors.append({"tool": "nicebox_update_page_settings", "missing": missing_page_settings_contracts})
+
+    page_management_service_source = (ROOT / "api" / "app" / "openclaw" / "service" / "PageManagementService.php").read_text(encoding="utf-8")
+    generate_seo_body = page_management_service_source.split("public function generateSeo", 1)[-1].split("public function updateSettings", 1)[0]
+    skill_capability_source = (ROOT / "api" / "config" / "skill_capabilities.php").read_text(encoding="utf-8")
+    page_seo_contracts = {
+        "shared_generator": "SeoTdkGeneratorService" in generate_seo_body and "generateBundle(" in generate_seo_body,
+        "generate_only": "'saved' => false" in generate_seo_body
+            and "->save(" not in generate_seo_body and "->update(" not in generate_seo_body and "->insert(" not in generate_seo_body,
+        "operation_log_capability": "sitepages/generatepageseo" in skill_capability_source and "page.seo.generate" in skill_capability_source,
+        "legacy_review_choices": all(token in page_management_sources["legacy_skill"] for token in ["确定保存", "重新生成", "取消"]),
+        "workbuddy_review_choices": all(token in page_management_sources["workbuddy_skill"] for token in ["确定保存", "重新生成", "取消"]),
+    }
+    missing_page_seo_contracts = [name for name, present in page_seo_contracts.items() if not present]
+    if missing_page_seo_contracts:
+        page_contract_errors.append({"tool": "nicebox_generate_page_seo", "missing": missing_page_seo_contracts})
 
     article_contract_errors = []
     article_controller_source = (ROOT / "api" / "app" / "openclaw" / "controller" / "Article.php").read_text(encoding="utf-8")
