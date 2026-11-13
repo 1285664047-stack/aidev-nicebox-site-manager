@@ -76,6 +76,8 @@ metadata: {"clawdbot":{"emoji":"[MCP]"}}
 `api_tool.py` 的 `--args-json` 使用与对应 MCP 工具相同的字段。例如：
 `python api_tool.py nicebox_get_site_source`，或
 `python api_tool.py nicebox_create_article_category --args-json '{"name":"新闻","parent_id":0}'`。
+页面名称修改的固定格式为：
+`python api_tool.py nicebox_update_page_settings --args-json '{"page_id":123,"changes":{"page_name":"新名称"}}'`。
 
 状态查询、检测和优化重试必须继续使用原 `operation_id` 或 `request_id`，不得因为切换通道重复创建任务。
 

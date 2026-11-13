@@ -22,7 +22,9 @@ metadata: {"clawdbot":{"emoji":"[PAGE]"}}
 - 复制：`nicebox_copy_pages`，使用本次操作唯一的内部 `operation_id`；只复制明确页面，不递归复制子页面，不发布网站。超时重试必须复用同一个值，不能重复复制。
 - 显示/隐藏：`nicebox_update_page_status`，同步共享导航，但不发布网站。
 - 文件名：`nicebox_update_page_filename`，只允许字母、数字、下划线和横杠；冲突时提示更换。
-- 页面名称和 TDK：`nicebox_update_page_settings`，只传用户要求修改的字段，未传字段保持不变。
+- 页面名称和 TDK：`nicebox_update_page_settings`，参数固定为 `{"page_id":页面编号,"changes":{"page_name":"新名称"}}`；TDK 同样只能放在 `changes` 内，字段为 `seo_title`、`seo_keywords`、`seo_description`。只传用户要求修改的字段，未传字段保持不变；禁止猜测 `name`、`title`、`pageName`、`settings` 或 `fields` 等别名。
+
+页面名称和文件名是两个独立操作。用户同时修改时，分别调用页面设置和文件名工具；页面名称成功必须以返回的 `changed_fields` 包含 `page_name` 且页面详情中的 `page_name` 已更新为准，不能因为文件名成功就推断名称成功。
 
 不得为了统一流程给以上操作增加“是否确认”。缺少新位置、新状态或新值时，只补问缺失参数。
 
