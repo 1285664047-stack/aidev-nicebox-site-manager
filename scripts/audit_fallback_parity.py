@@ -207,6 +207,17 @@ def main():
                 })
             if tool == "nicebox_update_page_sort" and "expected_scope_hash" not in snippet:
                 page_contract_errors.append({"tool": tool, "missing": ["expected_scope_hash schema"]})
+    page_settings_contracts = {
+        "mcp_nested_changes": 'changes: z.object({' in source and 'page_name: z.string().trim()' in source,
+        "fallback_normalizer": 'def normalize_payload(tool, payload):' in api_tool_source
+            and 'nicebox_update_page_settings' in api_tool_source and 'normalized["changes"] = changes' in api_tool_source,
+        "controller_legacy_compatibility": "foreach (['page_name', 'seo_title', 'seo_keywords', 'seo_description'] as $field)" in controller_source,
+        "legacy_skill_exact_contract": '"changes":{"page_name":"新名称"}' in page_management_sources["legacy_skill"],
+        "workbuddy_skill_exact_contract": '"changes":{"page_name":"新名称"}' in page_management_sources["workbuddy_skill"],
+    }
+    missing_page_settings_contracts = [name for name, present in page_settings_contracts.items() if not present]
+    if missing_page_settings_contracts:
+        page_contract_errors.append({"tool": "nicebox_update_page_settings", "missing": missing_page_settings_contracts})
 
     article_contract_errors = []
     article_controller_source = (ROOT / "api" / "app" / "openclaw" / "controller" / "Article.php").read_text(encoding="utf-8")

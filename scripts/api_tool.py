@@ -117,12 +117,26 @@ def parse_args():
     return parser.parse_args()
 
 
+def normalize_payload(tool, payload):
+    """Keep legacy REST calls compatible with the canonical MCP contract."""
+    if tool != "nicebox_update_page_settings" or "changes" in payload:
+        return payload
+    fields = ("page_name", "seo_title", "seo_keywords", "seo_description")
+    changes = {field: payload[field] for field in fields if field in payload}
+    if not changes:
+        return payload
+    normalized = {key: value for key, value in payload.items() if key not in fields}
+    normalized["changes"] = changes
+    return normalized
+
+
 def main():
     args = parse_args()
     try:
         payload = json.loads(args.args_json)
         if not isinstance(payload, dict):
             raise ValueError("--args-json 必须是 JSON object")
+        payload = normalize_payload(args.tool, payload)
         if args.tool == "nicebox_generate_content_cover" and not payload.get("aspect_ratio"):
             output({"need_input": True, "message": "请先让用户选择图片比例，再生成封面。"})
             return 3
