@@ -50,6 +50,7 @@ metadata: {"clawdbot":{"emoji":"[MCP]"}}
 | --- | --- | --- |
 | 版本、站点状态、来源、语言、首页验证 | `nicebox_get_release_info`、`nicebox_get_site_status`、`nicebox_get_site_source`、`nicebox_list_languages`、`nicebox_verify_homepage` | `api_tool.py TOOL` |
 | 页面代码只读能力 | `nicebox_list_pages`、`nicebox_get_page_metadata`、`nicebox_get_page_sections`、`nicebox_get_page_code`、`nicebox_get_page_width_settings`、`nicebox_diagnose_page_components` | `api_tool.py TOOL --args-json JSON` |
+| 页面管理 | `nicebox_get_page_management_detail`、页面排序/复制/删除影响与删除/显示隐藏/语言影响与变更/文件名/页面设置等 10 个管理工具 | `api_tool.py TOOL --args-json JSON`；只有删除和更改语言要求确认 |
 | 页面草稿校验 | `nicebox_validate_page_change`、`nicebox_preview_page_width_settings` | `api_tool.py TOOL --args-json JSON` |
 | 页面预览、保存与回退 | `nicebox_create_page_preview`、`nicebox_create_page_width_preview`、`nicebox_get_page_preview`、`nicebox_abandon_page_preview`、`nicebox_commit_page_change`、`nicebox_commit_page_width_settings`、`nicebox_get_page_change_operation`、`nicebox_list_page_backups`、`nicebox_preview_page_backup`、`nicebox_commit_page_backup` | `api_tool.py TOOL --args-json JSON` |
 | 新增页面分析、草稿、预览和确认创建 | `nicebox_analyze_page_creation`、`nicebox_create_page_draft`、`nicebox_get_page_creation_draft`、`nicebox_abandon_page_creation_draft`、`nicebox_commit_page_creation`、`nicebox_get_page_creation_operation` | `api_tool.py TOOL --args-json JSON` |
@@ -69,6 +70,7 @@ metadata: {"clawdbot":{"emoji":"[MCP]"}}
 | 留言和整站预览 | `nicebox_list_messages`、`nicebox_generate_preview` | `api_tool.py TOOL --args-json JSON` |
 | FTP 配置、测试、准备、上传、状态和取消 | 6 个 FTP/publish 工具 | `ftp_manager.py get-config/test-connection/prepare/start/get-task-status/cancel-task` |
 | 初始化和企业资料 | `nicebox_initialize_site`、`nicebox_save_company_info` | `initialize_site.py`、`api_tool.py nicebox_save_company_info` |
+| AI知识库基本资料 | `nicebox_get_knowledge_profile`、`nicebox_update_knowledge_profile` | `api_tool.py` 同名工具 |
 | 整站生成和进度 | `nicebox_start_website_generation`、`nicebox_get_website_generation_status` | `python -u _full_gen.py` 前台 SSE 流程，持续显示进度并返回最终结果 |
 
 `api_tool.py` 的 `--args-json` 使用与对应 MCP 工具相同的字段。例如：
