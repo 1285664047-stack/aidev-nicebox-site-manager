@@ -1,0 +1,171 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""Generic REST fallback for one-to-one Nicebox MCP API tools."""
+
+import argparse
+import json
+import sys
+import urllib.parse
+
+from openclaw_client import OpenClawError, output, request
+from config_reader import get_base_url
+
+
+TOOLS = {
+    "nicebox_get_site_status": ("GET", "/site/status"),
+    "nicebox_get_release_info": ("GET", "/site/getReleaseInfo"),
+    "nicebox_get_site_source": ("GET", "/site/getFromUrl"),
+    "nicebox_get_knowledge_profile": ("GET", "/knowledge/getProfile"),
+    "nicebox_update_knowledge_profile": ("POST", "/knowledge/updateProfile"),
+    "nicebox_list_languages": ("GET", "/site_pages/getLanguageList"),
+    "nicebox_update_language_config": ("POST", "/site_languages/updateConfig"),
+    "nicebox_preview_language_migration": ("POST", "/site_languages/previewMigration"),
+    "nicebox_execute_language_migration": ("POST", "/site_languages/executeMigration"),
+    "nicebox_get_language_delete_impact": ("GET", "/site_languages/getDeleteImpact"),
+    "nicebox_delete_language": ("POST", "/site_languages/delete"),
+    "nicebox_get_default_language_impact": ("GET", "/site_languages/getDefaultImpact"),
+    "nicebox_set_default_language": ("POST", "/site_languages/setDefault"),
+    "nicebox_get_language_operation": ("GET", "/site_languages/getOperation"),
+    "nicebox_verify_homepage": ("GET", "/site_pages/readIndexHtml"),
+    "nicebox_analyze_page_creation": ("POST", "/site_pages/analyzePageCreation"),
+    "nicebox_create_page_draft": ("POST", "/site_pages/createPageDraft"),
+    "nicebox_get_page_creation_draft": ("GET", "/site_pages/getPageCreationDraft"),
+    "nicebox_abandon_page_creation_draft": ("POST", "/site_pages/abandonPageCreationDraft"),
+    "nicebox_commit_page_creation": ("POST", "/site_pages/commitPageCreation"),
+    "nicebox_get_page_creation_operation": ("GET", "/site_pages/getPageCreationOperation"),
+    "nicebox_list_pages": ("GET", "/site_pages/listPages"),
+    "nicebox_get_page_management_detail": ("GET", "/site_pages/getPageManagementDetail"),
+    "nicebox_update_page_sort": ("POST", "/site_pages/updatePageSort"),
+    "nicebox_update_page_parent": ("POST", "/site_pages/updatePageParent"),
+    "nicebox_copy_pages": ("POST", "/site_pages/copyPages"),
+    "nicebox_check_page_deletion": ("POST", "/site_pages/checkPageDeletion"),
+    "nicebox_delete_pages": ("POST", "/site_pages/deletePages"),
+    "nicebox_update_page_status": ("POST", "/site_pages/updatePageStatus"),
+    "nicebox_check_page_locale_change": ("POST", "/site_pages/checkPageLocaleChange"),
+    "nicebox_update_page_locale": ("POST", "/site_pages/updatePageLocale"),
+    "nicebox_update_page_filename": ("POST", "/site_pages/updatePageFilename"),
+    "nicebox_generate_page_seo": ("POST", "/site_pages/generatePageSeo"),
+    "nicebox_update_page_settings": ("POST", "/site_pages/updatePageSettings"),
+    "nicebox_get_page_metadata": ("GET", "/site_pages/getPageMetadata"),
+    "nicebox_get_page_sections": ("GET", "/site_pages/getPageSections"),
+    "nicebox_get_page_code": ("GET", "/site_pages/getPageCode"),
+    "nicebox_get_page_width_settings": ("GET", "/site_pages/getPageWidthSettings"),
+    "nicebox_diagnose_page_components": ("GET", "/site_pages/diagnosePageComponents"),
+    "nicebox_validate_page_change": ("POST", "/site_pages/validatePageChange"),
+    "nicebox_preview_page_width_settings": ("POST", "/site_pages/previewPageWidthSettings"),
+    "nicebox_create_page_preview": ("POST", "/site_pages/createPagePreview"),
+    "nicebox_create_page_width_preview": ("POST", "/site_pages/createPageWidthPreview"),
+    "nicebox_get_page_preview": ("GET", "/site_pages/getPagePreview"),
+    "nicebox_abandon_page_preview": ("POST", "/site_pages/abandonPagePreview"),
+    "nicebox_rollback_page_preview_step": ("POST", "/site_pages/rollbackPagePreviewStep"),
+    "nicebox_commit_page_change": ("POST", "/site_pages/commitPageChange"),
+    "nicebox_commit_page_width_settings": ("POST", "/site_pages/commitPageWidthSettings"),
+    "nicebox_get_page_change_operation": ("GET", "/site_pages/getPageChangeOperation"),
+    "nicebox_list_page_backups": ("GET", "/site_pages/listPageBackups"),
+    "nicebox_preview_page_backup": ("POST", "/site_pages/previewPageBackup"),
+    "nicebox_commit_page_backup": ("POST", "/site_pages/commitPageBackup"),
+    "nicebox_get_shared_header": ("GET", "/site_pages/getSharedHeader"),
+    "nicebox_get_shared_footer": ("GET", "/site_pages/getSharedFooter"),
+    "nicebox_create_shared_section_preview": ("POST", "/site_pages/createSharedSectionPreview"),
+    "nicebox_get_shared_section_preview": ("GET", "/site_pages/getSharedSectionPreview"),
+    "nicebox_commit_shared_section": ("POST", "/site_pages/commitSharedSection"),
+    "nicebox_get_shared_section_operation": ("GET", "/site_pages/getSharedSectionOperation"),
+    "nicebox_list_shared_section_backups": ("GET", "/site_pages/listSharedSectionBackups"),
+    "nicebox_preview_shared_section_backup": ("POST", "/site_pages/previewSharedSectionBackup"),
+    "nicebox_commit_shared_section_backup": ("POST", "/site_pages/commitSharedSectionBackup"),
+    "nicebox_list_article_categories": ("GET", "/article/getCategories"),
+    "nicebox_get_article_detail": ("GET", "/article/getDetail"),
+    "nicebox_check_article_filename": ("POST", "/article/checkFilename"),
+    "nicebox_update_article": ("POST", "/article/update"),
+    "nicebox_regenerate_article_seo": ("POST", "/article/regenerateSeo"),
+    "nicebox_regenerate_article_faq": ("POST", "/article/regenerateFaq"),
+    "nicebox_sync_article_schema": ("POST", "/article/syncSchemaFromFaq"),
+    "nicebox_list_product_categories": ("GET", "/product/getCategories"),
+    "nicebox_get_product_detail": ("GET", "/product/getDetail"),
+    "nicebox_check_product_filename": ("POST", "/product/checkFilename"),
+    "nicebox_update_product": ("POST", "/product/update"),
+    "nicebox_regenerate_product_seo": ("POST", "/product/regenerateSeo"),
+    "nicebox_regenerate_product_faq": ("POST", "/product/regenerateFaq"),
+    "nicebox_sync_product_schema": ("POST", "/product/syncSchemaFromFaq"),
+    "nicebox_list_faqs": ("GET", "/faq/list"),
+    "nicebox_search_faqs": ("GET", "/faq/list"),
+    "nicebox_list_faq_categories": ("GET", "/faq/getCategories"),
+    "nicebox_search_faq_categories": ("GET", "/faq/getCategories"),
+    "nicebox_create_faq_category": ("POST", "/faq/createCategory"),
+    "nicebox_create_faq": ("POST", "/faq/create"),
+    "nicebox_get_faq_detail": ("GET", "/faq/getDetail"),
+    "nicebox_update_faq": ("POST", "/faq/update"),
+    "nicebox_delete_faq": ("POST", "/faq/delete"),
+    "nicebox_get_faq_category_impact": ("GET", "/faq/getCategoryImpact"),
+    "nicebox_update_faq_category": ("POST", "/faq/updateCategory"),
+    "nicebox_delete_faq_category": ("POST", "/faq/deleteCategory"),
+    "nicebox_create_article_category": ("POST", "/article/createCategory"),
+    "nicebox_create_product_category": ("POST", "/product/createCategory"),
+    "nicebox_get_article_category_impact": ("GET", "/article/getCategoryImpact"),
+    "nicebox_update_article_category": ("POST", "/article/updateCategory"),
+    "nicebox_delete_article_category": ("POST", "/article/deleteCategory"),
+    "nicebox_get_product_category_impact": ("GET", "/product/getCategoryImpact"),
+    "nicebox_update_product_category": ("POST", "/product/updateCategory"),
+    "nicebox_delete_product_category": ("POST", "/product/deleteCategory"),
+    "nicebox_generate_article_content": ("POST", "/ai_tools/generateNewsContent"),
+    "nicebox_generate_product_content": ("POST", "/ai_tools/generateProductContent"),
+    "nicebox_generate_content_cover": ("POST", "/ai_tools/generateContentCover"),
+    "nicebox_generate_content_preview": ("GET", "/site/generateContentShareUrl"),
+    "nicebox_list_messages": ("GET", "/message/list"),
+    "nicebox_generate_preview": ("GET", "/site/generateShareUrl"),
+    "nicebox_get_ftp_config": ("GET", "/site_publish/getConfig"),
+    "nicebox_test_ftp_connection": ("POST", "/site_publish/testFtpConnection"),
+    "nicebox_get_publish_status": ("GET", "/site_publish/getTaskStatus"),
+    "nicebox_save_company_info": ("POST", "/ai_tools/getCompanyInfo"),
+}
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="MCP 原子工具的普通 REST API 回退入口")
+    parser.add_argument("tool", choices=sorted(TOOLS))
+    parser.add_argument("--args-json", default="{}", help="JSON object，字段与 MCP 工具参数一致")
+    return parser.parse_args()
+
+
+def normalize_payload(tool, payload):
+    """Keep legacy REST calls compatible with the canonical MCP contract."""
+    if tool != "nicebox_update_page_settings" or "changes" in payload:
+        return payload
+    fields = ("page_name", "seo_title", "seo_keywords", "seo_description")
+    changes = {field: payload[field] for field in fields if field in payload}
+    if not changes:
+        return payload
+    normalized = {key: value for key, value in payload.items() if key not in fields}
+    normalized["changes"] = changes
+    return normalized
+
+
+def main():
+    args = parse_args()
+    try:
+        payload = json.loads(args.args_json)
+        if not isinstance(payload, dict):
+            raise ValueError("--args-json 必须是 JSON object")
+        payload = normalize_payload(args.tool, payload)
+        if args.tool == "nicebox_generate_content_cover" and not payload.get("aspect_ratio"):
+            output({"need_input": True, "message": "请先让用户选择图片比例，再生成封面。"})
+            return 3
+        method, path = TOOLS[args.tool]
+        data = request(method, path, payload)
+        if args.tool in ("nicebox_generate_content_preview", "nicebox_generate_preview") and isinstance(data, dict):
+            share_url = data.get("share_url")
+            if isinstance(share_url, str) and share_url.startswith("/"):
+                base = urllib.parse.urlparse(get_base_url())
+                data = {**data, "share_url": "%s://%s%s" % (base.scheme, base.netloc, share_url)}
+        output({"tool": args.tool, "data": data})
+        return 0
+    except (ValueError, json.JSONDecodeError) as exc:
+        output({"error": str(exc), "error_code": "INVALID_ARGUMENTS"}, ok=False)
+        return 2
+    except OpenClawError as exc:
+        output({"error": str(exc), "error_code": exc.code, "data": exc.data}, ok=False)
+        return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
