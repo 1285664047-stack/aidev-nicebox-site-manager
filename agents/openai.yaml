@@ -1,0 +1,18 @@
+interface:
+  display_name: "Nicebox.AI 建站助手"
+  short_description: "通过 API Key 连接 Nicebox.AI 网站，通过自然语言管理文章、产品、留言和网站发布。"
+  icon_small: "./icon.png"
+  icon_large: "./icon.png"
+  brand_color: "#0052D9"
+  default_prompt: "使用 $website-manager 管理我的 Nicebox.AI 网站。"
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "nicebox"
+      description: "Nicebox MCP Server for website management"
+      transport: "streamable_http"
+      url: "https://ai.nicebox.cn/mcp"
+
+policy:
+  allow_implicit_invocation: true

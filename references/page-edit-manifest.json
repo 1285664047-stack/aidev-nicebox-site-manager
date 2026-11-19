@@ -1,0 +1,27 @@
+{
+  "library_version": "1.0.11",
+  "prompt_version": "1.0.11",
+  "rules_version": "1.0.11",
+  "sources": [
+    "api/app/common/tools/ai/AiPrompts.php",
+    "api/app/common/tools/page/PageParser.php",
+    "api/app/common/tools/page/processors/",
+    "api/app/common/tools/ai/HtmlAnalyzer.php",
+    "api/app/common/tools/ai/HtmlHandler.php",
+    "api/app/openclaw/service/PageComponentDiagnosticService.php",
+    "api/app/openclaw/service/PageCodeValidationService.php",
+    "api/app/openclaw/service/PageChangeWorkflowService.php",
+    "frontend/src/utils/singleOriginMarqueePrompt.js",
+    "frontend/src/utils/imageTextCardPrompt.js",
+    "frontend/src/composables/useElementSelector.js"
+  ],
+  "files": [
+    "page-edit-document-and-style.md",
+    "page-edit-javascript-ownership.md",
+    "page-edit-dynamic-content.md",
+    "page-edit-navigation-banner-media.md",
+    "page-edit-forms-search-links.md",
+    "page-edit-dialogue.md",
+    "page-edit-review.md"
+  ]
+}
